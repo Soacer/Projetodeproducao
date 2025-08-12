@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Principal</title>
+<link rel="stylesheet" href="CSS/estilos_globais.css">
+<link rel="stylesheet" href="CSS/estilos_home.css">
+<link rel="stylesheet" href="CSS/estilos_caminho_critico.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="icon" href="IMG/a+.ico">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">algetec<span>+</span></div>
+        <ul class="nav-menu">
+            <li><a href="home.html" class="active"><i class="fas fa-tachometer-alt"></i> Início</a></li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fas fa-industry"></i> Ordens de Produção <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="formulario.html">Nova Ordem</a></li>
+                    <li><a href="painel_op.html">Painel Interativo</a></li>
+                    <li><a href="visualizar_op.html">Visualizar OP</a></li>
+                </ul>
+            </li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fas fa-sitemap"></i> Roteiros <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="cadastro_roteiro.html">Cadastrar Roteiro</a></li>
+                    <li><a href="edicao_roteiro.html">Editar Roteiro</a></li>
+                </ul>
+            </li>
+            <li><a href="caminho_critico.html"><i class="fas fa-project-diagram"></i> Caminho Crítico</a></li>
+            <li><a href="dashboard.html"><i class="fas fa-chart-bar"></i> Gráficos</a></li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fa-solid fa-gear"></i> Manutenção <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="manutencao.html"> Cadastro de Manutenção </a></li>
+                </ul>
+            </li>
+        </ul>
+    </aside>
+    <div class="main-content">
+        <header class="page-header">
+            <h1>Análise de Caminho Crítico</h1>
+            <p>Selecione um roteiro para visualizar suas dependências e caminho crítico.</p>
+        </header>
+        <div class="main-content">
+            <main>
+                <section id="selecao-roteiro" class="card">
+                    <h2>1. Selecione o Roteiro</h2>
+                    <div id="form-selecao" class="form-selecao">
+                        <div class="campo"><label for="produto">Produto:</label><select id="produto" name="produto"
+                                required>
+                                <option value="" disabled selected>Carregando...</option>
+                            </select></div>
+                        <div class="campo"><label for="sequencia">Sequência:</label><select id="sequencia"
+                                name="sequencia" required disabled>
+                                <option value="" disabled selected>Selecione um produto</option>
+                            </select></div>
+                        <div class="campo"><label for="roteiro">Roteiro:</label><select id="roteiro" name="roteiro"
+                                required disabled>
+                                <option value="" disabled selected>Selecione uma sequência</option>
+                            </select></div>
+                        <div class="campo"><label for="revisao">Revisão:</label><select id="revisao" name="revisao"
+                                required disabled>
+                                <option value="" disabled selected>Selecione um roteiro</option>
+                            </select></div>
+                        <button id="btn-calcular-caminho">Calcular Caminho Crítico</button>
+                    </div>
+                </section>
+
+                <section id="resultado-caminho-critico" class="card hidden">
+                    <h2>2. Resultado da Análise</h2>
+                    <p class="duracao-info">Duração Mínima Total Estimada: <strong id="duracao-total">--</strong> horas.
+                    </p>
+                    <h3>Visualização do Fluxo (Gráfico de Gantt Simplificado)</h3>
+                    <div id="gantt-container" class="gantt-container">
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <script src="JS/script_sidebar.js"></script>
+        <script src="JS/script_caminho_critico.js"></script>
+
+</body>
+
+</html>

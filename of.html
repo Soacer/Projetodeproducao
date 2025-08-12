@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ordem de Fabricação</title>
+    <link rel="stylesheet" href="CSS/estilos.css">
+</head>
+
+<body>
+    <div class="container">
+        <header class="ordem-header">
+            <table class="tabela-principal">
+                <tr>
+                    <td class="logo-op" rowspan="3">
+                        <div class="logo">algetec<span class="plus">+</span></div>
+                    </td>
+                    <td class="titulo" colspan="3">ORDEM DE FABRICACAO</td>
+                    <td class="campo-numero"><label>Nº:</label>
+                        <div class="valor" id="display-numero"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="campo"><label>Data do Pedido:</label>
+                        <div class="valor" id="display-data-pedido"></div>
+                    </td>
+                    <td class="campo"><label>Data de Emissão:</label>
+                        <div class="valor" id="display-data-emissao"></div>
+                    </td>
+                    <td class="campo"><label>Quantidade:</label>
+                        <div class="valor" id="display-quantidade"></div>
+                    </td>
+                    <td class="campo"><label>Prioridade:</label>
+                        <div class="valor" id="display-prioridade"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="campo"><label>Produto:</label>
+                        <div class="valor" id="display-produto"></div>
+                    </td>
+                    <td class="campo"><label>Sequência:</label>
+                        <div class="valor" id="display-sequencia"></div>
+                    </td>
+                    <td class="campo"><label>Roteiro:</label>
+                        <div class="valor" id="display-roteiro"></div>
+                    </td>
+                    <td class="campo"><label>Revisão:</label>
+                        <div class="valor" id="display-revisao"></div>
+                    </td>
+                </tr>
+            </table>
+        </header>
+
+        <main class="ordem-corpo">
+            <table class="tabela-operacoes">
+                <thead>
+                    <tr>
+                        <th>Ordem</th>
+                        <th>Operação</th>
+                        <th>Setor/Maquina</th>
+                        <th>Tempo Estimado (h)</th>
+                        <th>Responsável</th>
+                        <th>Data/Hora Início</th>
+                        <th>Data/Hora Final</th>
+                        <th>Assinatura</th>
+                    </tr>
+                </thead>
+                <tbody id="tabela-corpo">
+                </tbody>
+            </table>
+        </main>
+
+        <section class="secao-assinaturas">
+            <div class="campo-assinatura">
+                <div class="linha-para-assinar"></div>
+                <p class="titulo-assinatura">Coordenador de Elétrica</p>
+            </div>
+            <div class="campo-assinatura">
+                <div class="linha-para-assinar"></div>
+                <p class="titulo-assinatura">Coordenador de Mecânica</p>
+            </div>
+        </section>
+
+        <footer class="acoes">
+            <a href="home.html" class="btn-secundario">Voltar para a Home</a>
+            <button id="imprimirPagina" class="btn-primario">Imprimir Ordem</button>
+        </footer>
+    </div>
+    <script src="JS/scripts.js"></script>
+</body>
+
+</html>

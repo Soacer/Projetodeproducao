@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Principal</title>
+    <link rel="stylesheet" href="CSS/estilos_globais.css">
+    <link rel="stylesheet" href="CSS/estilos_manutencao.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="IMG/a+.ico">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">algetec<span>+</span></div>
+        <ul class="nav-menu">
+            <li><a href="home.html" class="active"><i class="fas fa-tachometer-alt"></i> Início</a></li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fas fa-industry"></i> Ordens de Produção <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="formulario.html">Nova Ordem</a></li>
+                    <li><a href="painel_op.html">Painel Interativo</a></li>
+                    <li><a href="visualizar_op.html">Visualizar OP</a></li>
+                </ul>
+            </li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fas fa-sitemap"></i> Roteiros <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="cadastro_roteiro.html">Cadastrar Roteiro</a></li>
+                    <li><a href="edicao_roteiro.html">Editar Roteiro</a></li>
+                </ul>
+            </li>
+            <li><a href="caminho_critico.html"><i class="fas fa-project-diagram"></i> Caminho Crítico</a></li>
+            <li><a href="dashboard.html"><i class="fas fa-chart-bar"></i> Gráficos</a></li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fa-solid fa-gear"></i> Manutenção <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="manutencao.html"> Cadastro de Manutenção </a></li>
+                </ul>
+            </li>
+        </ul>
+    </aside>
+    <div class="main-content">
+        <header class="page-header">
+            <h1>Gestão de Manutenção Preventiva</h1>
+            <p>Cadastre e visualize as tarefas de manutenção dos equipamentos.</p>
+        </header>
+
+        <main>
+            <section class="card">
+                <h2>Cadastrar Nova Tarefa de Manutenção</h2>
+                <form id="form-cadastro-manutencao">
+                    <div class="campo"><label for="item">Item/Equipamento:</label><input type="text" id="item"
+                            name="item" required></div>
+                    <div class="campo"><label for="modelo">Modelo:</label><input type="text" id="modelo" name="modelo">
+                    </div>
+                    <div class="campo"><label for="serie">Nº de Série:</label><input type="text" id="serie"
+                            name="serie"></div>
+                    <div class="campo"><label for="tarefas">Tarefas a Executar:</label><textarea id="tarefas"
+                            name="tarefas" rows="3"></textarea></div>
+                    <div class="campo"><label for="componente_envolvido">Componente Envolvido:</label><input type="text"
+                            id="componente_envolvido" name="componente_envolvido"></div>
+                    <div class="campo"><label for="recomendacao">Recomendação:</label><input type="text"
+                            id="recomendacao" name="recomendacao"></div>
+                    <div class="campo"><label for="ultima_execucao">Última Execução:</label><input type="date"
+                            id="ultima_execucao" name="ultima_execucao"></div>
+                    <div class="campo"><label for="periodo">Período (dias):</label><input type="number" id="periodo"
+                            name="periodo" min="1"></div>
+                    <div class="campo"><label for="custo_estimado">Custo Estimado (R$):</label><input type="number"
+                            id="custo_estimado" name="custo_estimado" step="0.01" min="0"></div>
+                    <div class="campo"><label for="anexos">Anexos (Link):</label><input type="url" id="anexos"
+                            name="anexos" placeholder="https://..."></div>
+                    <div class="campo"><label for="observacoes">Observações:</label><textarea id="observacoes"
+                            name="observacoes" rows="3"></textarea></div>
+                    <button type="submit" id="btn-salvar-manutencao">Salvar Tarefa</button>
+                </form>
+            </section>
+
+            <section class="card">
+                <h2>Manutenções Cadastradas</h2>
+                <input type="text" id="filtro-manutencao" placeholder="Filtrar por item, modelo, status...">
+                <div class="tabela-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Modelo</th>
+                                <th>Série</th>
+                                <th>Próxima Execução</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-manutencao-corpo">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+    <div id="modal-edicao" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>Editar Tarefa de Manutenção</h2>
+            <form id="form-edicao-manutencao">
+                <input type="hidden" id="edit-id" name="id">
+                <div class="campo"><label for="edit-item">Item/Equipamento:</label><input type="text" id="edit-item"
+                        name="item" required></div>
+                <div class="campo"><label for="edit-modelo">Modelo:</label><input type="text" id="edit-modelo"
+                        name="modelo"></div>
+                <div class="campo"><label for="edit-serie">Nº de Série:</label><input type="text" id="edit-serie"
+                        name="serie"></div>
+                <div class="campo full-width"><label for="edit-tarefas">Tarefas a Executar:</label><textarea
+                        id="edit-tarefas" name="tarefas" rows="3"></textarea></div>
+                <div class="campo"><label for="edit-componente_envolvido">Componente Envolvido:</label><input
+                        type="text" id="edit-componente_envolvido" name="componente_envolvido"></div>
+                <div class="campo"><label for="edit-recomendacao">Recomendação:</label><input type="text"
+                        id="edit-recomendacao" name="recomendacao"></div>
+                <div class="campo"><label for="edit-ultima_execucao">Última Execução:</label><input type="date"
+                        id="edit-ultima_execucao" name="ultima_execucao"></div>
+                <div class="campo"><label for="edit-periodo">Período (dias):</label><input type="number"
+                        id="edit-periodo" name="periodo" min="1"></div>
+                <div class="campo"><label for="edit-proxima_execucao">Próxima Execução:</label><input type="date"
+                        id="edit-proxima_execucao" name="proxima_execucao"></div>
+                <div class="campo"><label for="edit-data_execucao">Data da Execução Atual:</label><input type="date"
+                        id="edit-data_execucao" name="data_execucao"></div>
+                <div class="campo"><label for="edit-status">Status:</label>
+                    <select id="edit-status" name="status">
+                        <option value="Pendente">Pendente</option>
+                        <option value="Em Andamento">Em Andamento</option>
+                        <option value="Concluído">Concluído</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                </div>
+                <div class="campo full-width"><label for="edit-materiais_utilizados">Materiais
+                        Utilizados:</label><textarea id="edit-materiais_utilizados" name="materiais_utilizados"
+                        rows="2"></textarea></div>
+                <div class="campo"><label for="edit-custo_estimado">Custo Estimado (R$):</label><input type="number"
+                        id="edit-custo_estimado" name="custo_estimado" step="0.01" min="0"></div>
+                <div class="campo"><label for="edit-custo_real">Custo Real (R$):</label><input type="number"
+                        id="edit-custo_real" name="custo_real" step="0.01" min="0"></div>
+                <div class="campo"><label for="edit-anexos">Anexos (Link):</label><input type="url" id="edit-anexos"
+                        name="anexos" placeholder="https://..."></div>
+                <div class="campo full-width"><label for="edit-observacoes">Observações:</label><textarea
+                        id="edit-observacoes" name="observacoes" rows="3"></textarea></div>
+                <div class="modal-acoes">
+                    <button type="button" id="btn-cancelar-edicao">Cancelar</button>
+                    <button type="submit" id="btn-salvar-manutencao">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="JS/script_sidebar.js"></script>
+    <script src="JS/script_manutencao.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Roteiro</title>
+    <link rel="stylesheet" href="CSS/estilos_globais.css">
+    <link rel="stylesheet" href="CSS/estilos_cadastro.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="IMG/a+.ico">
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">algetec<span>+</span></div>
+        <ul class="nav-menu">
+            <li><a href="home.html" class="active"><i class="fas fa-tachometer-alt"></i> Início</a></li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fas fa-industry"></i> Ordens de Produção <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="formulario.html">Nova Ordem</a></li>
+                    <li><a href="painel_op.html">Painel Interativo</a></li>
+                    <li><a href="visualizar_op.html">Visualizar OP</a></li>
+                </ul>
+            </li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fas fa-sitemap"></i> Roteiros <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="cadastro_roteiro.html">Cadastrar Roteiro</a></li>
+                    <li><a href="edicao_roteiro.html">Editar Roteiro</a></li>
+                </ul>
+            </li>
+            <li><a href="caminho_critico.html"><i class="fas fa-project-diagram"></i> Caminho Crítico</a></li>
+            <li><a href="dashboard.html"><i class="fas fa-chart-bar"></i> Gráficos</a></li>
+            <li><a href="manutencao.html"><i class="fa-solid fa-gear"></i> Manutenção </a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <header class="page-header">
+            <h1>Cadastro de Novo Roteiro</h1>
+            <p>Defina as informações e adicione as operações para um novo roteiro de produção.</p>
+        </header>
+
+        <main>
+            <section class="card">
+                <h2>Dados Principais do Roteiro</h2>
+                <form id="form-roteiro-header">
+                    <div class="campo"><label for="roteiro-produto">Produto Associado:</label><input type="text"
+                            id="roteiro-produto" required></div>
+                    <div class="campo"><label for="roteiro-sequencia">Sequência:</label><input type="text"
+                            id="roteiro-sequencia" required></div>
+                    <div class="campo"><label for="roteiro-numero">Nº do Roteiro:</label><input type="number"
+                            id="roteiro-numero" min="1" required></div>
+                    <div class="campo"><label for="roteiro-revisao">Revisão:</label><input type="number"
+                            id="roteiro-revisao" min="1" required></div>
+                </form>
+            </section>
+
+            <section class="card">
+                <h2>Adicionar Operação ao Roteiro</h2>
+                <form id="form-add-operacao">
+
+                    <div class="campos-principais-grid">
+                        <div class="campo"><label for="op-ordem">Ordem:</label><input type="number" id="op-ordem"
+                                min="1" required></div>
+                        <div class="campo"><label for="op-descricao">Operação:</label><input type="text"
+                                id="op-descricao" required></div>
+                        <div class="campo"><label for="op-setor">Setor/Máquina:</label><input type="text" id="op-setor"
+                                required></div>
+                        <div class="campo"><label for="op-tempo">Tempo Estimado (h):</label><input type="number"
+                                id="op-tempo" step="0.1" min="0" required></div>
+                        <div class="campo"><label for="op-responsavel">Responsável:</label><input type="text"
+                                id="op-responsavel" required></div>
+                    </div>
+
+                    <div class="campo-dependencias">
+                        <label>Esta operação depende de (Opcional):</label>
+                        <div id="lista-dependencias-checkboxes" class="checkbox-container">
+                            <p class="aviso-sem-op">Adicione operações para poder definir dependências.</p>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-adicionar">Adicionar à Lista</button>
+                </form>
+            </section>
+
+            <section class="card">
+                <h2>Operações do Roteiro</h2>
+                <div class="tabela-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ordem</th>
+                                <th>Operação</th>
+                                <th>Dependências (Ordem)</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-operacoes-body"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <footer class="acoes-principais">
+                <button id="salvar-roteiro-completo">Salvar Roteiro Completo</button>
+            </footer>
+        </main>
+    </div>
+
+    <script src="JS/script_sidebar.js"></script>
+    <script src="JS/script_cadastro_roteiro.js"></script>
+</body>
+
+</html>

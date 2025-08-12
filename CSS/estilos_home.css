@@ -1,0 +1,92 @@
+/* Estilos específicos para os cartões de KPI da home page */
+.kpi-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.kpi-card {
+    background-color: var(--cor-container);
+    border-radius: 8px;
+    box-shadow: var(--sombra-padrao);
+    border: 1px solid var(--cor-borda);
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-icon i {
+    font-size: 24px;
+}
+
+.card-info .card-value {
+    display: block;
+    font-size: 28px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.card-info .card-label {
+    font-size: 14px;
+    color: var(--cor-texto-suave);
+}
+
+.dashboard-grid {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    /* Gráfico ocupa 2/3, lista 1/3 */
+    gap: 30px;
+}
+
+.chart-widget,
+.list-widget {
+    height: 400px;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+.list-widget h2,
+.chart-widget h2 {
+    text-align: left;
+    font-size: 18px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--cor-borda);
+    padding-bottom: 10px;
+}
+
+#lista-tempo-medio {
+    list-style: none;
+    height: 300px;
+    overflow-y: auto;
+}
+
+#lista-tempo-medio li {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 5px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+#lista-tempo-medio .produto {
+    font-weight: 500;
+}
+
+#lista-tempo-medio .tempo {
+    font-weight: 700;
+    color: var(--cor-primaria);
+}

@@ -1,0 +1,33 @@
+@import url('estilos_globais.css');
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+}
+header { text-align: center; margin-bottom: 40px; }
+.logo { font-size: 28px; font-weight: bold; }
+.logo span { color: red; }
+h1 { font-size: 26px; color: #2c3e50; margin: 10px 0; }
+p { color: #555; }
+.chart-container {
+    position: relative;
+    width: 100%;
+    /* A altura será controlada pelo aspect-ratio do gráfico no JS */
+}
+
+/* Estilos específicos para a página do dashboard */
+.chart-container {
+    position: relative;
+    width: 100%;
+    min-height: 500px; /* Garante uma altura mínima para o gráfico */
+}

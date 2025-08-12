@@ -1,0 +1,158 @@
+/* Importa a base visual do sistema (menu lateral, cores, fontes, etc.) */
+@import url('estilos_globais.css');
+
+/* --- ESTILOS ESPECÍFICOS PARA A PÁGINA DE CADASTRO DE ROTEIRO --- */
+
+/* Organiza os cards verticalmente com um espaçamento entre eles */
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+h2 {
+    color: #2c3e50;
+    text-align: left;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--cor-borda);
+    padding-bottom: 10px;
+    font-size: 20px;
+}
+
+/* Esconde a linha <hr> que usávamos no layout antigo */
+hr {
+    display: none;
+}
+
+/* Estilo padrão para os campos de formulário */
+.campo {
+    display: flex;
+    flex-direction: column;
+}
+
+.campo label {
+    margin-bottom: 5px;
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--cor-texto-suave);
+}
+
+.campo input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+}
+
+/* Grid para o formulário do cabeçalho do roteiro */
+#form-roteiro-header {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+/* Seção de "Adicionar Operação" */
+#form-add-operacao .campos-operacao {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.campo-dependencias {
+    margin-bottom: 20px;
+}
+
+.checkbox-container {
+    max-height: 120px;
+    overflow-y: auto;
+    border: 1px solid var(--cor-borda);
+    padding: 10px;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+}
+
+.checkbox-item {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.checkbox-item input {
+    margin-right: 8px;
+}
+
+#form-add-operacao button.btn-adicionar {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    background-color: var(--cor-primaria);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+#form-add-operacao button.btn-adicionar:hover {
+    background-color: var(--cor-primaria-hover);
+}
+
+/* Tabela de Operações Adicionadas */
+.tabela-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+thead th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.btn-remover {
+    background: none;
+    border: none;
+    color: #dc3545; /* Vermelho para a ação de remover */
+    cursor: pointer;
+    font-size: 18px;
+}
+.btn-remover:hover {
+    color: #a71d2a;
+}
+
+/* Rodapé com o botão de salvar final */
+.acoes-principais {
+    text-align: center;
+    margin-top: 10px;
+}
+
+#salvar-roteiro-completo {
+    background-color: #28a745; /* Verde para a ação de salvar */
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#salvar-roteiro-completo:hover {
+    background-color: #218838;
+}
+
+#salvar-roteiro-completo:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+}

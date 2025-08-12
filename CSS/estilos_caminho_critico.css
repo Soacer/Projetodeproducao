@@ -1,0 +1,95 @@
+@import url('estilos_globais.css');
+
+.form-selecao {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    align-items: end;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+}
+
+.campo label {
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.campo select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+}
+
+.form-selecao button {
+    grid-column: 1 / -1;
+    margin-top: 15px;
+}
+
+.hidden {
+    display: none;
+}
+
+.duracao-info {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.duracao-info strong {
+    color: var(--cor-primaria);
+}
+
+/* Estilos para o Gráfico de Gantt Simplificado */
+.gantt-container {
+    position: relative;
+    padding: 20px 0;
+    border-top: 1px solid #eee;
+}
+
+.gantt-linha {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.gantt-label {
+    width: 200px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 10px;
+}
+
+.gantt-barra-container {
+    flex-grow: 1;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    height: 30px;
+    position: relative;
+}
+
+.gantt-barra {
+    position: absolute;
+    height: 100%;
+    background-color: #007bff;
+    border-radius: 5px;
+    color: white;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.gantt-barra.critico {
+    background-color: #dc3545;
+}
+
+/* Barra do caminho crítico em vermelho */

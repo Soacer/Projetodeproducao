@@ -1,0 +1,273 @@
+/* Importando uma fonte profissional e legível do Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+:root {
+    --cor-primaria: #005fba;
+    /* Um azul SAP mais moderno */
+    --cor-primaria-hover: #004a93;
+    --cor-fundo: #f5f6fa;
+    --cor-container: #ffffff;
+    --cor-texto: #343a40;
+    --cor-texto-suave: #6c757d;
+    --cor-borda: #dee2e6;
+    --sombra-padrao: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    display: flex;
+}
+
+/* --- ESTRUTURA PRINCIPAL DA APLICAÇÃO --- */
+
+.sidebar {
+    width: 240px;
+    background-color: #1f2937;
+    /* Cor escura para o menu */
+    color: #f9fafb;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
+
+.sidebar-header {
+    padding: 0 20px;
+    margin-bottom: 30px;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.sidebar-header span {
+    color: #ef4444;
+    /* Vermelho para o '+' */
+}
+
+.nav-menu {
+    list-style: none;
+    flex-grow: 1;
+}
+
+.nav-menu a {
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    color: #d1d5db;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-menu a:hover,
+.nav-menu a.active {
+    background-color: #374151;
+    color: #ffffff;
+}
+
+.nav-menu i {
+    margin-right: 15px;
+    width: 20px;
+    text-align: center;
+}
+
+.main-content {
+    /* Define uma margem à esquerda EXATAMENTE IGUAL à largura do sidebar. */
+    /* Isso "empurra" todo o conteúdo para a direita, liberando o espaço para o menu. */
+    margin-left: 240px; 
+    
+    /* Garante que o conteúdo ocupe o resto do espaço disponível */
+    width: calc(100% - 240px); 
+    padding: 30px;
+}
+
+.page-header {
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 28px;
+    color: #111827;
+}
+
+.page-header p {
+    font-size: 16px;
+    color: var(--cor-texto-suave);
+    margin-top: 5px;
+}
+
+.card {
+    background-color: var(--cor-container);
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: var(--sombra-padrao);
+    border: 1px solid var(--cor-borda);
+}
+
+/* --- NOVOS ESTILOS PARA O MENU LATERAL COM DROPDOWN (CORRIGIDO) --- */
+
+/* Estilo para o item do menu que contém um submenu */
+.nav-menu .menu-item-has-children>a {
+    display: flex;
+    /*justify-content: space-between;*/
+    align-items: center;
+}
+
+/* Ícone de seta para indicar o dropdown (Método Corrigido) */
+.nav-menu .menu-item-has-children>a .arrow-icon::before {
+    /*content: '\\f078';  Código unicode para a seta para baixo */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 0.8em;
+    transition: transform 0.3s ease;
+    display: inline-block;
+    /* Garante que a transformação funcione */
+}
+
+/* Gira a seta para cima quando o menu está ativo/aberto */
+.nav-menu .menu-item-has-children>a.active .arrow-icon::before {
+    transform: rotate(180deg);
+}
+
+/* Estilo para a lista do submenu */
+.submenu {
+    list-style: none;
+    background-color: #111827;
+    /* Cor de fundo um pouco mais escura */
+    /* Animação de abrir/fechar */
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+/* Estilo para os links dentro do submenu */
+.submenu a {
+    padding-left: 55px;
+    /* Adiciona um recuo para indicar hierarquia */
+    font-size: 0.9em;
+}
+
+/* Adicione esta regra de estilo */
+.btn-primario {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    background-color: var(--cor-primaria);
+    /* Usa a cor azul principal do sistema */
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-primario:hover {
+    background-color: var(--cor-primaria-hover);
+    /* Usa a cor azul mais escura no hover */
+}
+
+@import url('estilos_globais.css');
+
+.form-selecao {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    align-items: end;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+}
+
+.campo label {
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.campo select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+}
+
+.form-selecao button {
+    grid-column: 1 / -1;
+    margin-top: 15px;
+}
+
+.hidden {
+    display: none;
+}
+
+.duracao-info {
+    font-size: 1.2em;
+    margin-bottom: 20px;
+}
+
+.duracao-info strong {
+    color: var(--cor-primaria);
+}
+
+/* Estilos para o Gráfico de Gantt Simplificado */
+.gantt-container {
+    position: relative;
+    padding: 20px 0;
+    border-top: 1px solid #eee;
+}
+
+.gantt-linha {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.gantt-label {
+    width: 200px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 10px;
+}
+
+.gantt-barra-container {
+    flex-grow: 1;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    height: 30px;
+    position: relative;
+}
+
+.gantt-barra {
+    position: absolute;
+    height: 100%;
+    background-color: #007bff;
+    border-radius: 5px;
+    color: white;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.gantt-barra.critico {
+    background-color: #dc3545;
+}
+
+/* Barra do caminho crítico em vermelho */

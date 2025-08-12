@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizar Ordem de Produção</title>
+    <link rel="stylesheet" href="CSS/estilos_visualizacao.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="IMG/a+.ico">
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">algetec<span>+</span></div>
+        <ul class="nav-menu">
+            <li><a href="home.html" class="active"><i class="fas fa-tachometer-alt"></i> Início</a></li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fas fa-industry"></i> Ordens de Produção <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="formulario.html">Nova Ordem</a></li>
+                    <li><a href="painel_op.html">Painel Interativo</a></li>
+                    <li><a href="visualizar_op.html">Visualizar OP</a></li>
+                </ul>
+            </li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fas fa-sitemap"></i> Roteiros <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="cadastro_roteiro.html">Cadastrar Roteiro</a></li>
+                    <li><a href="edicao_roteiro.html">Editar Roteiro</a></li>
+                </ul>
+            </li>
+            <li><a href="caminho_critico.html"><i class="fas fa-project-diagram"></i> Caminho Crítico</a></li>
+            <li><a href="dashboard.html"><i class="fas fa-chart-bar"></i> Gráficos</a></li>
+            <li><a href="manutencao.html"><i class="fa-solid fa-gear"></i> Manutenção </a></li>
+        </ul>
+    </aside>
+    <div class="main-content">
+        <header class="page-header">
+            <h1>Visualizar Ordem de Produção</h1>
+            <p>Selecione uma Ordem de Produção na lista para carregar seus detalhes.</p>
+        </header>
+
+        <main>
+            <section class="card">
+                <div class="search-form-container">
+                    <select id="select-op-busca" required>
+                        <option value="" disabled selected>Carregando lista de OPs...</option>
+                    </select>
+                </div>
+            </section>
+
+            <div id="resultado-container" class="hidden">
+                </div>
+        </main>
+    </div>
+    <script src="JS/script_sidebar.js"></script>
+    <script src="JS/script_visualizacao.js"></script>
+</body>
+
+</html>

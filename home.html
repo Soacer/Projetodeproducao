@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Principal</title>
+    <link rel="stylesheet" href="CSS/estilos_globais.css">
+    <link rel="stylesheet" href="CSS/estilos_home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="IMG/a+.ico">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">algetec<span>+</span></div>
+        <ul class="nav-menu">
+            <li><a href="home.html" class="active"><i class="fas fa-tachometer-alt"></i> Início</a></li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fas fa-industry"></i> Ordens de Produção <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="formulario.html">Nova Ordem</a></li>
+                    <li><a href="painel_op.html">Painel Interativo</a></li>
+                    <li><a href="visualizar_op.html">Visualizar OP</a></li>
+                </ul>
+            </li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fas fa-sitemap"></i> Roteiros <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="cadastro_roteiro.html">Cadastrar Roteiro</a></li>
+                    <li><a href="edicao_roteiro.html">Editar Roteiro</a></li>
+                </ul>
+            </li>
+            <li><a href="caminho_critico.html"><i class="fas fa-project-diagram"></i> Caminho Crítico</a></li>
+            <li><a href="dashboard.html"><i class="fas fa-chart-bar"></i> Gráficos</a></li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fa-solid fa-gear"></i> Manutenção <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="manutencao.html"> Cadastro de Manutenção </a></li>
+                </ul>
+            </li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <header class="page-header">
+            <h1>Dashboard Principal</h1>
+            <p>Visão geral do status da sua produção.</p>
+        </header>
+
+        <main>
+            <div class="kpi-cards">
+                <div class="kpi-card">
+                    <div class="card-icon" style="background-color: #e0f2fe;"><i class="fas fa-cogs"
+                            style="color: #0ea5e9;"></i></div>
+                    <div class="card-info">
+                        <span class="card-value" id="ops-em-andamento">--</span>
+                        <span class="card-label">OPs em Andamento</span>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="card-icon" style="background-color: #dcfce7;"><i class="fas fa-check-circle"
+                            style="color: #22c55e;"></i></div>
+                    <div class="card-info">
+                        <span class="card-value" id="ops-concluidas">--</span>
+                        <span class="card-label">OPs Concluídas</span>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="card-icon" style="background-color: #fef9c3;"><i class="fas fa-hourglass-half"
+                            style="color: #eab308;"></i></div>
+                    <div class="card-info">
+                        <span class="card-value" id="operacoes-pendentes">--</span>
+                        <span class="card-label">Operações Pendentes</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card chart-widget">
+                    <h2>Gargalos de Produção (Operações Pendentes)</h2>
+                    <div class="chart-container">
+                        <canvas id="grafico-gargalos"></canvas>
+                    </div>
+                </div>
+                <div class="card list-widget">
+                    <h2>Tempo Médio de Conclusão por Produto</h2>
+                    <ul id="lista-tempo-medio">
+                    </ul>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="JS/script_sidebar.js"></script>
+    <script src="JS/script_home.js"></script>
+</body>
+
+</html>

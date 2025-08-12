@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Ordem de Produção</title>
+    <link rel="stylesheet" href="CSS/estilos_globais.css">
+    <link rel="stylesheet" href="CSS/estilos_form.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="IMG/a+.ico">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="sidebar-header">algetec<span>+</span></div>
+        <ul class="nav-menu">
+            <li><a href="home.html" class="active"><i class="fas fa-tachometer-alt"></i> Início</a></li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fas fa-industry"></i> Ordens de Produção <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="formulario.html">Nova Ordem</a></li>
+                    <li><a href="painel_op.html">Painel Interativo</a></li>
+                    <li><a href="visualizar_op.html">Visualizar OP</a></li>
+                </ul>
+            </li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fas fa-sitemap"></i> Roteiros <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="cadastro_roteiro.html">Cadastrar Roteiro</a></li>
+                    <li><a href="edicao_roteiro.html">Editar Roteiro</a></li>
+                </ul>
+            </li>
+            <li><a href="caminho_critico.html"><i class="fas fa-project-diagram"></i> Caminho Crítico</a></li>
+            <li><a href="dashboard.html"><i class="fas fa-chart-bar"></i> Gráficos</a></li>
+            <li><a href="manutencao.html"><i class="fa-solid fa-gear"></i> Manutenção </a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <header class="page-header">
+            <h1>Criar Nova Ordem de Fabricação</h1>
+            <p>Preencha os dados abaixo para gerar uma nova OP e suas operações.</p>
+        </header>
+
+        <main>
+            <div class="card">
+                <form id="form-ordem">
+                    <div class="campo" id="campo-num"><label for="numero">Nº da OP:</label><input type="text" id="numero" name="numero" required></div>
+                    <div class="campo" id="campo-data-pedido"><label for="data-pedido">Data do Pedido:</label><input type="date" id="data-pedido" name="data-pedido" required></div>
+                    <div class="campo" id="campo-data-emissao"><label for="data-emissao">Data de Emissão:</label><input type="date" id="data-emissao" name="data-emissao" required></div>
+                    <div class="campo" id="campo-produto"><label for="produto">Produto:</label><select id="produto" name="produto" required><option value="" disabled selected>Carregando...</option></select></div>
+                    <div class="campo" id="campo-prioridade"><label for="prioridade">Prioridade:</label><input type="text" id="prioridade" name="prioridade"></div>
+                    <div class="campo" id="campo-quantidade"><label for="quantidade">Quantidade:</label><input type="number" id="quantidade" name="quantidade" min="1" required></div>
+                    <div class="campo" id="campo-sequencia"><label for="sequencia">Sequência:</label><select id="sequencia" name="sequencia" required disabled><option value="" disabled selected>Selecione um produto</option></select></div>
+                    <div class="campo" id="campo-roteiro"><label for="roteiro">Roteiro:</label><select id="roteiro" name="roteiro" required disabled><option value="" disabled selected>Selecione uma sequência</option></select></div>
+                    <div class="campo" id="campo-revisao"><label for="revisao">Revisão:</label><select id="revisao" name="revisao" required disabled><option value="" disabled selected>Selecione um roteiro</option></select></div>
+                    <button type="submit" id="botao-gerar">Gerar Ordem de Fabricação</button>
+                </form>
+            </div>
+        </main>
+    </div>
+    
+    <script src="JS/script_sidebar.js"></script>
+    <script src="JS/script_form.js"></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+@import url('estilos_globais.css');
+/* Importa os estilos globais */
+
+/* Estilos específicos do formulário */
+#form-ordem {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: var(--cor-texto-suave);
+    font-weight: 500;
+}
+
+input,
+select {
+    padding: 10px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #fff;
+}
+
+select:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+#campo-produto {
+    grid-column: 1 / 4;
+}
+
+#campo-sequencia {
+    grid-column: 1 / 2;
+}
+
+#campo-roteiro {
+    grid-column: 2 / 3;
+}
+
+#campo-revisao {
+    grid-column: 3 / 4;
+}
+
+#botao-gerar {
+    grid-column: 1 / -1;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    background-color: var(--cor-primaria);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+#botao-gerar:hover {
+    background-color: var(--cor-primaria-hover);
+}
