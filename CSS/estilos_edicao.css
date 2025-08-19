@@ -34,7 +34,7 @@ h2 {
 
 .form-selecao {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); 
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     align-items: end;
 }
@@ -182,4 +182,176 @@ table {
     width: 100%;
 }
 
-/* ... (Cole o resto dos seus estilos da tabela de edição aqui) ... */
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+h2 {
+    color: #2c3e50;
+    text-align: left;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    font-size: 20px;
+}
+
+.form-selecao {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    align-items: end;
+}
+
+.form-selecao button {
+    grid-column: 1 / -1;
+    margin-top: 15px;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+}
+
+.campo label {
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.campo input,
+.campo select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+}
+
+select:disabled {
+    background-color: #e9ecef;
+}
+
+button {
+    background-color: var(--cor-primaria);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.form-edicao-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+#btn-add-linha-edicao {
+    background-color: #17a2b8;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+    vertical-align: middle;
+}
+
+thead th {
+    background-color: #f8f9fa;
+}
+
+tbody input {
+    width: 95%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.acoes-principais {
+    text-align: center;
+    margin-top: 20px;
+}
+
+#btn-salvar-alteracoes {
+    background-color: #28a745;
+    font-weight: bold;
+    width: 100%;
+    padding: 15px;
+}
+
+.btn-remover-edicao,
+.btn-editar-deps {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    margin: 0 5px;
+}
+
+.btn-remover-edicao {
+    color: #dc3545;
+}
+
+.btn-editar-deps {
+    color: #fd7e14;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+}
+
+.checkbox-container {
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid var(--cor-borda);
+    padding: 15px;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    margin: 20px 0;
+}
+
+.checkbox-item {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+.checkbox-item input {
+    margin-right: 10px;
+}
+
+.modal-acoes {
+    text-align: right;
+    margin-top: 20px;
+}

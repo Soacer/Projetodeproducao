@@ -52,15 +52,20 @@ hr {
 }
 
 /* Seção de "Adicionar Operação" */
-#form-add-operacao .campos-operacao {
+#form-add-operacao {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.campos-operacao {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 15px;
-    margin-bottom: 20px;
 }
 
 .campo-dependencias {
-    margin-bottom: 20px;
+    grid-column: 1 / -1; /* Faz a seção de dependências ocupar a linha inteira */
 }
 
 .checkbox-container {
@@ -82,7 +87,7 @@ hr {
     margin-right: 8px;
 }
 
-#form-add-operacao button.btn-adicionar {
+#form-add-operacao .btn-adicionar {
     width: 100%;
     padding: 12px;
     font-size: 16px;
@@ -94,7 +99,7 @@ hr {
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
-#form-add-operacao button.btn-adicionar:hover {
+#form-add-operacao .btn-adicionar:hover {
     background-color: var(--cor-primaria-hover);
 }
 
@@ -147,12 +152,26 @@ thead th {
     border-radius: 5px;
     cursor: pointer;
 }
-
 #salvar-roteiro-completo:hover {
     background-color: #218838;
 }
-
 #salvar-roteiro-completo:disabled {
     background-color: #aaa;
     cursor: not-allowed;
+}
+
+/* --- ESTILOS PARA O "ARRASTAR E SOLTAR" --- */
+.linha-arrastando {
+    background-color: #e7f1ff;
+    opacity: 0.7;
+}
+#tabela-operacoes-body tr {
+    cursor: grab;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+#tabela-operacoes-body tr:active {
+    cursor: grabbing;
 }

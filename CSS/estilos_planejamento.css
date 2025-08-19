@@ -1,0 +1,225 @@
+@import url('estilos_globais.css');
+
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* --- ESTILOS PARA O SISTEMA DE ABAS --- */
+.tabs-container {
+    display: flex;
+    border-bottom: 2px solid var(--cor-borda);
+    margin-bottom: 30px;
+}
+
+.tab-link {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--cor-texto-suave);
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    /* Alinha com a borda principal */
+}
+
+.tab-link.active {
+    color: var(--cor-primaria);
+    border-bottom-color: var(--cor-primaria);
+}
+
+.tab-content {
+    display: none;
+    /* Esconde todas as abas por padrão */
+    flex-direction: column;
+    gap: 30px;
+}
+
+.tab-content.active {
+    display: flex;
+    /* Mostra apenas a aba ativa */
+}
+
+/* --- FIM DOS ESTILOS DAS ABAS --- */
+
+h2 {
+    text-align: left;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+
+.form-selecao-simplificado {
+    display: grid;
+    grid-template-columns: 2fr 1fr auto;
+    gap: 20px;
+    align-items: end;
+}
+
+.campo {
+    display: flex;
+    flex-direction: column;
+}
+
+.campo label {
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.campo input,
+.campo select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid var(--cor-borda);
+    border-radius: 4px;
+}
+
+.form-selecao-simplificado button {
+    padding: 10px 20px;
+}
+
+#gantt-chart {
+    width: 100%;
+    height: auto;
+    min-height: 300px;
+}
+
+.acoes-principais {
+    text-align: right;
+    margin-top: 20px;
+}
+
+.filtros-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.opcoes-filtro {
+    display: flex;
+    gap: 10px;
+}
+
+.acordeon-container {
+    margin-top: 20px;
+}
+
+/* (Você pode reutilizar os estilos do acordeão do estilos_painel.css aqui) */
+.gantt-container-visualizacao {
+    width: 100%;
+    height: auto;
+    min-height: 200px;
+    padding-top: 15px;
+}
+
+/* --- Estilos para a Legenda do Gráfico Comparativo --- */
+
+.legenda-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    /* Espaço entre os itens da legenda */
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    border: 1px solid #eee;
+}
+
+.legenda-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+
+.legenda-cor {
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    margin-right: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+/* ========================================================== */
+/* --- ESTILOS PARA O ACORDEÃO DE PLANOS SALVOS --- */
+/* ========================================================== */
+
+.op-item {
+    border: 1px solid var(--cor-borda);
+    border-radius: 6px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    /* Garante que o conteúdo não vaze durante a animação */
+}
+
+/* Estilo do botão clicável (o cabeçalho do acordeão) */
+.op-collapse-btn {
+    width: 100%;
+    background-color: #fff;
+    border: none;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: left;
+    transition: background-color 0.2s ease;
+}
+
+.op-collapse-btn:hover {
+    background-color: #f9f9f9;
+}
+
+/* Quando o item está aberto, o botão fica levemente destacado */
+.op-collapse-btn.active {
+    background-color: #f7f7fa;
+}
+
+/* Agrupamento das informações no botão */
+.op-info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.op-info {
+    font-weight: 600;
+    color: var(--cor-texto-principal);
+}
+
+.op-produto {
+    font-size: 14px;
+    color: var(--cor-texto-suave);
+}
+
+/* Ícone de seta para indicar que é expansível */
+.op-collapse-btn::after {
+    content: '\f078';
+    /* Ícone de seta para baixo do Font Awesome */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: var(--cor-texto-suave);
+    transition: transform 0.3s ease;
+}
+
+/* Gira a seta quando o item está ativo (aberto) */
+.op-collapse-btn.active::after {
+    transform: rotate(180deg);
+}
+
+
+/* O conteúdo que colapsa (contém o gráfico de Gantt) */
+.op-collapse-content {
+    padding: 0 20px 20px 20px;
+    /* Padding apenas no conteúdo, não no cabeçalho */
+    background-color: #fff;
+    max-height: 0;
+    /* Começa fechado */
+    overflow: hidden;
+    transition: max-height 0.35s ease-out;
+}
