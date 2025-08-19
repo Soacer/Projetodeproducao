@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="CSS/estilos_globais.css">
     <link rel="stylesheet" href="CSS/estilos_cadastro.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="icon" href="IMG/a+.ico">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 </head>
 
 <body>
@@ -33,7 +33,13 @@
             </li>
             <li><a href="caminho_critico.html"><i class="fas fa-project-diagram"></i> Caminho Crítico</a></li>
             <li><a href="dashboard.html"><i class="fas fa-chart-bar"></i> Gráficos</a></li>
-            <li><a href="manutencao.html"><i class="fa-solid fa-gear"></i> Manutenção </a></li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fa-solid fa-gear"></i> Manutenção <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="manutencao.html"> Cadastro de Manutenção </a></li>
+                </ul>
+            </li>
+            <li><a href="planejamento.html"><i class="fa fa-clipboard"></i> Planejamento </a></li>
         </ul>
     </aside>
 
@@ -61,10 +67,7 @@
             <section class="card">
                 <h2>Adicionar Operação ao Roteiro</h2>
                 <form id="form-add-operacao">
-
-                    <div class="campos-principais-grid">
-                        <div class="campo"><label for="op-ordem">Ordem:</label><input type="number" id="op-ordem"
-                                min="1" required></div>
+                    <div class="campos-operacao">
                         <div class="campo"><label for="op-descricao">Operação:</label><input type="text"
                                 id="op-descricao" required></div>
                         <div class="campo"><label for="op-setor">Setor/Máquina:</label><input type="text" id="op-setor"
@@ -73,32 +76,34 @@
                                 id="op-tempo" step="0.1" min="0" required></div>
                         <div class="campo"><label for="op-responsavel">Responsável:</label><input type="text"
                                 id="op-responsavel" required></div>
-                    </div>
-
-                    <div class="campo-dependencias">
-                        <label>Esta operação depende de (Opcional):</label>
-                        <div id="lista-dependencias-checkboxes" class="checkbox-container">
-                            <p class="aviso-sem-op">Adicione operações para poder definir dependências.</p>
+                        <div class="campo-dependencias">
+                            <label>Esta operação depende de (Opcional):</label>
+                            <div id="lista-dependencias-checkboxes" class="checkbox-container">
+                                <p class="aviso-sem-op">Adicione operações para poder definir dependências.</p>
+                            </div>
                         </div>
                     </div>
-
                     <button type="submit" class="btn-adicionar">Adicionar à Lista</button>
                 </form>
             </section>
 
             <section class="card">
-                <h2>Operações do Roteiro</h2>
+                <h2>Operações do Roteiro (Arraste as linhas para reordenar)</h2>
                 <div class="tabela-container">
                     <table>
                         <thead>
                             <tr>
                                 <th>Ordem</th>
                                 <th>Operação</th>
+                                <th>Setor/Máquina</th>
+                                <th>Tempo Estimado</th>
+                                <th>Responsável</th>
                                 <th>Dependências (Ordem)</th>
                                 <th>Ação</th>
                             </tr>
                         </thead>
-                        <tbody id="tabela-operacoes-body"></tbody>
+                        <tbody id="tabela-operacoes-body">
+                        </tbody>
                     </table>
                 </div>
             </section>

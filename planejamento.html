@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planejamento de Produção</title>
+    <link rel="stylesheet" href="CSS/estilos_globais.css">
+    <link rel="stylesheet" href="CSS/estilos_planejamento.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" href="IMG/a+.ico">
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">algetec<span>+</span></div>
+        <ul class="nav-menu">
+            <li><a href="home.html"><i class="fas fa-tachometer-alt"></i> Início</a></li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fas fa-industry"></i> Ordens de Produção <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="formulario.html">Nova Ordem</a></li>
+                    <li><a href="painel_op.html">Painel Interativo</a></li>
+                    <li><a href="visualizar_op.html">Visualizar OP</a></li>
+                </ul>
+            </li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fas fa-sitemap"></i> Roteiros <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="cadastro_roteiro.html">Cadastrar Roteiro</a></li>
+                    <li><a href="edicao_roteiro.html">Editar Roteiro</a></li>
+                </ul>
+            </li>
+            <li><a href="caminho_critico.html"><i class="fas fa-project-diagram"></i> Caminho Crítico</a></li>
+            <li><a href="dashboard.html"><i class="fas fa-chart-bar"></i> Gráficos</a></li>
+            <li><a href="manutencao.html"><i class="fa-solid fa-gear"></i> Manutenção </a></li>
+            <li><a href="planejamento.html" class="active"><i class="fa fa-clipboard"></i> Planejamento </a></li>
+        </ul>
+    </aside>
+
+    <div class="main-content">
+        <header class="page-header">
+            <h1>Planejamento de Produção</h1>
+            <p>Crie novos planejamentos ou visualize os cronogramas salvos.</p>
+        </header>
+
+        <main>
+            <div class="tabs-container">
+                <button class="tab-link active" data-tab="criar-plano">Criar Novo Planejamento</button>
+                <button class="tab-link" data-tab="visualizar-planos">Visualizar Planos Salvos</button>
+            </div>
+
+            <div id="criar-plano" class="tab-content active">
+                <section class="card">
+                    <h2>Parâmetros do Planejamento</h2>
+                    <form id="form-planejamento" class="form-selecao-simplificado">
+                        <div class="campo">
+                            <label for="select-op">Ordem de Produção (Em Andamento):</label>
+                            <select id="select-op" required>
+                                <option>Carregando OPs...</option>
+                            </select>
+                        </div>
+                        <div class="campo">
+                            <label for="data-hora-inicio">Data e Hora de Início:</label>
+                            <input type="datetime-local" id="data-hora-inicio" required>
+                        </div>
+                        <button type="submit">Planejar</button>
+                    </form>
+                </section>
+                <section id="resultado-planejamento" class="card hidden">
+                    <h2>Linha do Tempo da Produção</h2>
+                    <div id="gantt-chart"></div>
+                    <footer class="acoes-principais">
+                        <button id="btn-salvar-planejamento">Salvar Planejamento</button>
+                    </footer>
+                </section>
+            </div>
+
+            <div id="visualizar-planos" class="tab-content">
+                <section class="card">
+                    <div class="filtros-container">
+                        <label>Filtrar por Status da OP:</label>
+                        <div class="opcoes-filtro">
+                            <input type="radio" id="filtro-todos" name="filtro-status" value="todos" checked>
+                            <label for="filtro-todos">Todos</label>
+                            <input type="radio" id="filtro-andamento" name="filtro-status" value="Em Andamento">
+                            <label for="filtro-andamento">Em Andamento</label>
+                            <input type="radio" id="filtro-concluido" name="filtro-status" value="Concluído">
+                            <label for="filtro-concluido">Concluído</label>
+                        </div>
+                    </div>
+                    <div id="acordeon-planos" class="acordeon-container">
+                    </div>
+                </section>
+                <section class="card">
+                    <h2>Comparar Planejamentos</h2>
+                    <p>
+                        Selecione duas ou mais OPs com planejamentos salvos para visualizar os cronogramas sobrepostos.
+                        <br>
+                        <strong>Dica:</strong> Mantenha a tecla <strong>Ctrl</strong> (ou <strong>Cmd</strong> no Mac)
+                        pressionada para selecionar várias OPs na lista.
+                    </p>
+
+                    <div id="form-comparacao" class="form-selecao-simplificado">
+                        <div class="campo" style="grid-column: 1 / span 2;"> <label for="select-ops-comparacao">Ordens
+                                de Produção Disponíveis:</label>
+                            <select id="select-ops-comparacao" required multiple style="height: 150px;">
+                            </select>
+                        </div>
+                        <button id="btn-comparar-planos">Comparar</button>
+                    </div>
+
+                    <div id="resultado-comparacao" class="hidden" style="margin-top: 20px;">
+                        <h3>Gráfico de Gantt Comparativo</h3>
+                        <div id="gantt-chart-comparativo"></div>
+                        <div id="legenda-comparativo" class="legenda-container"></div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+    <script src="JS/script_sidebar.js"></script>
+    <script src="JS/script_planejamento.js"></script>
+</body>
+
+</html>
