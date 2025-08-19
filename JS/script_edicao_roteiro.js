@@ -10,30 +10,29 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectRoteiro = document.getElementById('roteiro');
     const selectRevisao = document.getElementById('revisao');
     const inputRevisaoEdicao = document.getElementById('roteiro-revisao-edicao');
+    const modalDependencias = document.getElementById('modal-dependencias');
+    const btnSalvarDeps = document.getElementById('btn-salvar-deps');
+    const btnCancelarDeps = document.getElementById('btn-cancelar-deps');
     
     // --- CONFIGURAÇÃO ---
-    // <<< IMPORTANTE: COLOQUE AQUI A URL DA SUA IMPLANTAÇÃO MAIS RECENTE E FUNCIONAL >>>
     const urlApi = 'https://script.google.com/macros/s/AKfycbzCLJyPh0RYo1yOb4gcw6eegtfzlq2H_L9GktFQXyos13Bxz57bvXGTtWGa_Ens3Wqnzg/exec';
 
-    // --- ESTADO DA APLICAÇÃO (Variáveis de memória) ---
+    // --- ESTADO DA APLICAÇÃO ---
     let dadosParaSelecao = {};
     let operacoesAtuais = [];
     let infoRoteiroAtual = {};
+    let idOperacaoEmEdicao = null;
 
-    /**
-     * PASSO 1: Carrega os dados para os menus de seleção em cascata.
-     */
+    // --- LÓGICA DOS MENUS ---
     async function carregarMenusIniciais() {
         if (!selectProduto) return;
         selectProduto.innerHTML = '<option value="">Carregando...</option>';
         const url = `${urlApi}?action=getValoresFormulario&cacheBust=${new Date().getTime()}`;
         try {
             const resposta = await fetch(url);
-            if (!resposta.ok) throw new Error('Falha de rede ao buscar dados para os menus.');
-            
+            if (!resposta.ok) throw new Error('Falha de rede ao buscar dados.');
             dadosParaSelecao = await resposta.json();
             if (dadosParaSelecao.erro) throw new Error(dadosParaSelecao.mensagem);
-
             const produtos = Object.keys(dadosParaSelecao).sort();
             selectProduto.innerHTML = '<option value="" disabled selected>Selecione um produto</option>';
             produtos.forEach(p => selectProduto.add(new Option(p, p)));
@@ -43,9 +42,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    /**
-     * PASSO 2: Atualiza o menu de Sequências quando um Produto é escolhido.
-     */
     function atualizarSequencias() {
         const produto = selectProduto.value;
         selectSequencia.innerHTML = '<option value="" disabled selected>Selecione uma sequência</option>';
@@ -54,7 +50,6 @@ document.addEventListener('DOMContentLoaded', function () {
         selectRoteiro.disabled = true;
         selectRevisao.innerHTML = '<option value="" disabled selected>Selecione um roteiro</option>';
         selectRevisao.disabled = true;
-
         if (produto && dadosParaSelecao[produto]) {
             const sequencias = Object.keys(dadosParaSelecao[produto]).sort((a, b) => a - b);
             sequencias.forEach(s => selectSequencia.add(new Option(s, s)));
@@ -62,9 +57,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    /**
-     * PASSO 3: Atualiza o menu de Roteiros quando uma Sequência é escolhida.
-     */
     function atualizarRoteiros() {
         const produto = selectProduto.value;
         const sequencia = selectSequencia.value;
@@ -72,17 +64,13 @@ document.addEventListener('DOMContentLoaded', function () {
         selectRoteiro.disabled = true;
         selectRevisao.innerHTML = '<option value="" disabled selected>Selecione um roteiro</option>';
         selectRevisao.disabled = true;
-
         if (produto && sequencia && dadosParaSelecao[produto][sequencia]) {
             const roteiros = Object.keys(dadosParaSelecao[produto][sequencia]).sort((a,b) => a-b);
             roteiros.forEach(r => selectRoteiro.add(new Option(r, r)));
             selectRoteiro.disabled = false;
         }
     }
-    
-    /**
-     * PASSO 4: Atualiza o menu de Revisões quando um Roteiro é escolhido.
-     */
+
     function atualizarRevisoes() {
         const produto = selectProduto.value;
         const sequencia = selectSequencia.value;
@@ -96,31 +84,25 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    /**
-     * Busca os dados do roteiro selecionado e os exibe na tabela de edição.
-     */
+    // --- LÓGICA DE EDIÇÃO ---
     async function carregarRoteiroParaEdicao() {
         infoRoteiroAtual = { produto: selectProduto.value, sequencia: selectSequencia.value, roteiro: selectRoteiro.value, revisao: selectRevisao.value };
         if (!infoRoteiroAtual.produto || !infoRoteiroAtual.sequencia || !infoRoteiroAtual.roteiro || !infoRoteiroAtual.revisao) {
-            alert('Por favor, selecione Produto, Sequência, Roteiro e Revisão para carregar.');
+            alert('Por favor, selecione todos os campos para carregar.');
             return;
         }
         btnCarregar.textContent = "Carregando...";
         btnCarregar.disabled = true;
-
         const url = `${urlApi}?action=getDadosRoteiroParaEdicao&produto=${infoRoteiroAtual.produto}&sequencia=${infoRoteiroAtual.sequencia}&roteiro=${infoRoteiroAtual.roteiro}&revisao=${infoRoteiroAtual.revisao}`;
         try {
             const resposta = await fetch(url);
             if (!resposta.ok) throw new Error("Falha ao carregar dados do roteiro.");
             const dadosCarregados = await resposta.json();
             if (dadosCarregados.erro) throw new Error(dadosCarregados.mensagem);
-            
             operacoesAtuais = dadosCarregados.operacoes || [];
-            if(inputRevisaoEdicao) inputRevisaoEdicao.value = dadosCarregados.revisao || '1'; // Campo para editar a revisão
-            
+            if(inputRevisaoEdicao) inputRevisaoEdicao.value = dadosCarregados.revisao || '1';
             renderizarTabela();
             if(edicaoSection) edicaoSection.classList.remove('hidden');
-            if(btnSalvar) btnSalvar.classList.remove('hidden');
         } catch (erro) {
             alert(`Erro ao carregar roteiro: ${erro.message}`);
         } finally {
@@ -129,63 +111,59 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    /**
-     * Desenha a tabela editável na tela com base nos dados em memória.
-     */
     function renderizarTabela() {
+        if (!tabelaBody) return;
         tabelaBody.innerHTML = '';
-        if (!operacoesAtuais) return;
-        operacoesAtuais.sort((a, b) => a.ordem - b.ordem);
+        operacoesAtuais.sort((a, b) => (parseInt(a.ordem) || 0) - (parseInt(b.ordem) || 0));
+        const mapaDeOrdens = new Map(operacoesAtuais.map(op => [op.id.toString(), op.ordem]));
         operacoesAtuais.forEach(op => {
             const linha = tabelaBody.insertRow();
             linha.dataset.id = op.id;
+            const dependenciasTexto = (op.dependencias || []).map(idTemp => mapaDeOrdens.get(idTemp.toString()) || '?').join(', ');
             linha.innerHTML = `
-                <td><input type="number" class="edit-ordem" value="${op.ordem || ''}" placeholder="Ordem"></td>
-                <td><input type="text" class="edit-operacao" value="${op.operacao || ''}" placeholder="Descrição"></td>
-                <td><input type="text" class="edit-setor" value="${op.setor_maquina || ''}" placeholder="Setor/Máquina"></td>
-                <td><input type="number" class="edit-tempo" value="${op.tempo_estimado || ''}" step="0.1" placeholder="Tempo"></td>
-                <td><input type="text" class="edit-responsavel" value="${op.responsavel || ''}" placeholder="Responsável"></td>
-                <td><button type="button" class="btn-remover-edicao" title="Remover"><i class="fas fa-trash-alt"></i></button></td>
+                <td><input type="number" class="edit-ordem" value="${op.ordem || ''}"></td>
+                <td><input type="text" class="edit-operacao" value="${op.operacao || ''}"></td>
+                <td><input type="text" class="edit-setor" value="${op.setor_maquina || ''}"></td>
+                <td><input type="number" class="edit-tempo" value="${op.tempo_estimado || ''}" step="0.1"></td>
+                <td><input type="text" class="edit-responsavel" value="${op.responsavel || ''}"></td>
+                <td><span>${dependenciasTexto}</span><button type="button" class="btn-editar-deps" title="Editar Dependências"><i class="fas fa-link"></i></button></td>
+                <td class="acoes-tabela"><button type="button" class="btn-remover-edicao" title="Remover Operação"><i class="fas fa-trash-alt"></i></button></td>
             `;
             linha.querySelector('.btn-remover-edicao').addEventListener('click', () => {
-                if (confirm('Tem certeza que deseja remover esta operação?')) {
+                if (confirm('Tem certeza?')) {
                     operacoesAtuais = operacoesAtuais.filter(item => item.id !== op.id);
                     renderizarTabela();
                 }
             });
+            linha.querySelector('.btn-editar-deps').addEventListener('click', () => abrirModalDependencias(op.id));
         });
     }
 
-    /**
-     * Adiciona uma nova linha em branco na tabela de edição.
-     */
     function adicionarNovaLinhaEditavel() {
         const novaOrdem = operacoesAtuais.length > 0 ? Math.max(...operacoesAtuais.map(op => parseInt(op.ordem) || 0)) + 1 : 1;
-        operacoesAtuais.push({ id: 'novo-' + Date.now(), ordem: novaOrdem, operacao: '', setor_maquina: '', tempo_estimado: '', responsavel: '' });
+        operacoesAtuais.push({ id: 'novo-' + Date.now(), ordem: novaOrdem, operacao: '', setor_maquina: '', tempo_estimado: '', responsavel: '', dependencias: [] });
         renderizarTabela();
     }
 
-    /**
-     * Coleta todos os dados da tela, monta o payload e envia para salvar.
-     */
     async function salvarAlteracoes() {
         if (!infoRoteiroAtual.produto) { alert("Nenhum roteiro carregado."); return; }
         const revisaoParaSalvar = inputRevisaoEdicao ? inputRevisaoEdicao.value : infoRoteiroAtual.revisao;
-        if (!revisaoParaSalvar) { alert("O campo 'Revisão' é obrigatório."); return; }
-        
+        if (!revisaoParaSalvar) { alert("O campo 'Salvar como Revisão nº' é obrigatório."); return; }
         btnSalvar.disabled = true;
         btnSalvar.textContent = "Salvando...";
-        
         const operacoesAtualizadas = [];
         const linhasDaTabela = tabelaBody.querySelectorAll('tr');
         for(const linha of linhasDaTabela) {
+            const idAtual = linha.dataset.id;
+            const opOriginal = operacoesAtuais.find(op => op.id == idAtual);
             const op = {
-                id: linha.dataset.id,
+                id: idAtual,
                 ordem: linha.querySelector('.edit-ordem').value,
                 operacao: linha.querySelector('.edit-operacao').value,
                 setor_maquina: linha.querySelector('.edit-setor').value,
                 tempo_estimado: linha.querySelector('.edit-tempo').value,
                 responsavel: linha.querySelector('.edit-responsavel').value,
+                dependencias: opOriginal ? opOriginal.dependencias : [] // Preserva as dependências
             };
             if (!op.ordem || !op.operacao) {
                 alert('Os campos "Ordem" e "Operação" não podem estar vazios.');
@@ -195,9 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             operacoesAtualizadas.push(op);
         };
-        
         const payload = { action: 'salvarRoteiroEditado', ...infoRoteiroAtual, revisao: revisaoParaSalvar, operacoes: operacoesAtualizadas };
-        
         try {
             await fetch(urlApi, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
             alert('Roteiro salvo com sucesso!');
@@ -210,14 +186,49 @@ document.addEventListener('DOMContentLoaded', function () {
             btnSalvar.textContent = "Salvar Alterações";
         }
     }
+    
+    function abrirModalDependencias(idOperacao) {
+        idOperacaoEmEdicao = idOperacao;
+        const operacaoAtual = operacoesAtuais.find(op => op.id === idOperacao);
+        if (!operacaoAtual) return;
+        const dependenciasAtuais = operacaoAtual.dependencias || [];
+        const containerCheckboxes = document.getElementById('lista-dependencias-modal');
+        document.getElementById('modal-op-ordem').textContent = `${operacaoAtual.ordem} - ${operacaoAtual.operacao}`;
+        containerCheckboxes.innerHTML = '';
+        operacoesAtuais.forEach(op => {
+            if (op.id !== idOperacao) {
+                const isChecked = dependenciasAtuais.includes(op.id);
+                const item = document.createElement('label');
+                item.className = 'checkbox-item';
+                item.innerHTML = `<input type="checkbox" value="${op.id}" ${isChecked ? 'checked' : ''}> ${op.ordem} - ${op.operacao}`;
+                containerCheckboxes.appendChild(item);
+            }
+        });
+        if (modalDependencias) modalDependencias.classList.remove('hidden');
+    }
 
-    // --- EVENT LISTENERS E EXECUÇÃO INICIAL ---
+    function salvarDependencias() {
+        const operacaoAtual = operacoesAtuais.find(op => op.id === idOperacaoEmEdicao);
+        if (!operacaoAtual) return;
+        const containerCheckboxes = document.getElementById('lista-dependencias-modal');
+        const novasDependencias = [];
+        containerCheckboxes.querySelectorAll('input:checked').forEach(cb => {
+            novasDependencias.push(cb.value);
+        });
+        operacaoAtual.dependencias = novasDependencias;
+        renderizarTabela();
+        if (modalDependencias) modalDependencias.classList.add('hidden');
+    }
+
+    // --- EVENT LISTENERS ---
     if (selectProduto) selectProduto.addEventListener('change', atualizarSequencias);
     if (selectSequencia) selectSequencia.addEventListener('change', atualizarRoteiros);
     if (selectRoteiro) selectRoteiro.addEventListener('change', atualizarRevisoes);
     if (btnCarregar) btnCarregar.addEventListener('click', carregarRoteiroParaEdicao);
     if (btnAddLinha) btnAddLinha.addEventListener('click', adicionarNovaLinhaEditavel);
     if (btnSalvar) btnSalvar.addEventListener('click', salvarAlteracoes);
+    if (btnSalvarDeps) btnSalvarDeps.addEventListener('click', salvarDependencias);
+    if (btnCancelarDeps) btnCancelarDeps.addEventListener('click', () => modalDependencias.classList.add('hidden'));
     
     carregarMenusIniciais();
 });
