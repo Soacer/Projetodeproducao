@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard de Progresso</title>
+    <title>Dashboard de Análise</title>
     <link rel="stylesheet" href="CSS/estilos_globais.css">
     <link rel="stylesheet" href="CSS/estilos_dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -33,29 +33,46 @@
                     <li><a href="edicao_roteiro.html">Editar Roteiro</a></li>
                 </ul>
             </li>
-            <li><a href="caminho_critico.html"><i class="fas fa-project-diagram"></i> Caminho Crítico</a></li>
-            <li><a href="dashboard.html"><i class="fas fa-chart-bar"></i> Gráficos</a></li>
             <li class="menu-item-has-children">
                 <a href="#"><i class="fa-solid fa-gear"></i> Manutenção <span class="arrow-icon"></span></a>
                 <ul class="submenu">
                     <li><a href="manutencao.html"> Cadastro de Manutenção </a></li>
                 </ul>
             </li>
-            <li><a href="planejamento.html"><i class="fa fa-clipboard"></i> Planejamento </a></li>
-        </ul>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fa fa-clipboard"></i> Ferramentas de Análise <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="planejamento.html">Planejamento</a></li>
+                    <li><a href="caminho_critico.html">Caminho Crítico</a></li>
+                    <li><a href="dashboard.html">Dashboards</a></li>
+                </ul>
+            </li>
     </aside>
 
     <div class="main-content">
         <header class="page-header">
-            <h1>Dashboard de Progresso das OPs</h1>
-            <p>Acompanhamento visual do status de todas as Ordens de Produção em andamento.</p>
+            <h1>Dashboards de Análise</h1>
+            <p>Acompanhamento visual de performance e progresso da produção.</p>
         </header>
 
         <main>
-            <div class="card chart-container">
-                <canvas id="grafico-progresso-ops"></canvas>
+            <div class="tabs-container">
+                <button class="tab-link active" data-tab="progresso-ops">Progresso das OPs</button>
+                <button class="tab-link" data-tab="planejado-realizado">Planejado vs. Realizado</button>
             </div>
-        </main>
+
+            <div id="progresso-ops" class="tab-content active">
+                <div class="card chart-container">
+                    <canvas id="grafico-progresso-ops"></canvas>
+                </div>
+            </div>
+
+            <div id="planejado-realizado" class="tab-content">
+                <div class="card chart-container">
+                    <canvas id="grafico-planejado-realizado"></canvas>
+                </div>
+            </div>
+            </main>
     </div>
 
     <script src="JS/script_sidebar.js"></script>

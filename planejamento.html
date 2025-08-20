@@ -14,11 +14,10 @@
 </head>
 
 <body>
-
     <aside class="sidebar">
         <div class="sidebar-header">algetec<span>+</span></div>
         <ul class="nav-menu">
-            <li><a href="home.html"><i class="fas fa-tachometer-alt"></i> Início</a></li>
+            <li><a href="home.html" class="active"><i class="fas fa-tachometer-alt"></i> Início</a></li>
             <li class="menu-item-has-children">
                 <a href="#"><i class="fas fa-industry"></i> Ordens de Produção <span class="arrow-icon"></span></a>
                 <ul class="submenu">
@@ -34,11 +33,22 @@
                     <li><a href="edicao_roteiro.html">Editar Roteiro</a></li>
                 </ul>
             </li>
-            <li><a href="caminho_critico.html"><i class="fas fa-project-diagram"></i> Caminho Crítico</a></li>
-            <li><a href="dashboard.html"><i class="fas fa-chart-bar"></i> Gráficos</a></li>
-            <li><a href="manutencao.html"><i class="fa-solid fa-gear"></i> Manutenção </a></li>
-            <li><a href="planejamento.html" class="active"><i class="fa fa-clipboard"></i> Planejamento </a></li>
-        </ul>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fa-solid fa-gear"></i> Manutenção <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="manutencao.html"> Cadastro de Manutenção </a></li>
+                </ul>
+            </li>
+            <li class="menu-item-has-children">
+                <a href="#"><i class="fa fa-clipboard"></i> Ferramentas de Análise <span class="arrow-icon"></span></a>
+                <ul class="submenu">
+                    <li><a href="planejamento.html"><i class="fa fa-area-chart" aria-hidden="true"></i> Cadastro e
+                            Visualização de Planejamentos </a></li>
+                    <li><a href="caminho_critico.html"><i class="fas fa-project-diagram"></i> Caminho Crítico</a></li>
+                    <li><a href="dashboard.html"><i class="fas fa-chart-bar"></i> Gráfico de Progresso das OP's </a>
+                    </li>
+                </ul>
+            </li>
     </aside>
 
     <div class="main-content">
@@ -114,6 +124,14 @@
                     </div>
 
                     <div id="resultado-comparacao" class="hidden" style="margin-top: 20px;">
+
+                        <div class="view-mode-container">
+                            <label>Agrupar por:</label>
+                            <div class="view-mode-toggle">
+                                <button id="btn-view-operacao" class="active">Operação</button>
+                                <button id="btn-view-responsavel">Responsável</button>
+                            </div>
+                        </div>
                         <h3>Gráfico de Gantt Comparativo</h3>
                         <div id="gantt-chart-comparativo"></div>
                         <div id="legenda-comparativo" class="legenda-container"></div>
