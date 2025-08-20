@@ -98,8 +98,75 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (erro) { console.error("Erro ao carregar tempo médio:", erro); }
     }
 
+    /**
+ * Carrega e exibe as próximas manutenções pendentes.
+ */
+    async function carregarProximasManutencoes() {
+        const listaEl = document.getElementById('lista-proximas-manutencoes');
+        if (!listaEl) return;
+        try {
+            // Ação nova que criaremos no backend
+            const url = `${urlApi}?action=getProximasManutencoes&cacheBust=${new Date().getTime()}`;
+            const resposta = await fetch(url);
+            const dados = await resposta.json();
+            if (dados.erro) throw new Error(dados.mensagem);
+
+            listaEl.innerHTML = '';
+            if (dados.length === 0) {
+                listaEl.innerHTML = '<li>Nenhuma manutenção pendente encontrada.</li>';
+                return;
+            }
+
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+
+            dados.forEach(item => {
+                const li = document.createElement('li');
+
+                const dataManutencao = new Date(item.proxima_execucao);
+                const dataFormatada = new Intl.DateTimeFormat('pt-BR', { timeZone: 'UTC' }).format(dataManutencao);
+
+                let classeData = 'futuro';
+                if (dataManutencao.getTime() < hoje.getTime()) {
+                    classeData = 'vencido';
+                } else if (dataManutencao.getTime() === hoje.getTime()) {
+                    classeData = 'hoje';
+                }
+
+                // =============================================
+                // ======= INÍCIO DA CORREÇÃO =======
+                // =============================================
+                let primeiraTarefa = 'Nenhuma tarefa especificada'; // Valor padrão
+                // Verifica se 'item.tarefas' existe e é uma string antes de processar
+                if (item.tarefas && typeof item.tarefas === 'string') {
+                    // Divide as tarefas pelo hífen e encontra a primeira que não seja vazia
+                    const primeiraTarefaValida = item.tarefas.split('-').find(tarefa => tarefa.trim() !== '');
+                    if (primeiraTarefaValida) {
+                        primeiraTarefa = primeiraTarefaValida.trim();
+                    }
+                }
+                // =============================================
+                // ======= FIM DA CORREÇÃO =======
+                // =============================================
+
+                li.innerHTML = `
+                <div class="item-info">
+                    <span class="item-nome">${item.item}</span>
+                    <small>${primeiraTarefa}</small> </div>
+                <span class="item-data ${classeData}">${dataFormatada}</span>
+            `;
+                listaEl.appendChild(li);
+            });
+
+        } catch (erro) {
+            console.error("Erro ao carregar próximas manutenções:", erro);
+            listaEl.innerHTML = '<li>Erro ao carregar dados.</li>';
+        }
+    }
+
     // Chama todas as funções de carregamento do dashboard
     carregarEstatisticas();
     carregarGargalos();
     carregarTempoMedio();
+    carregarProximasManutencoes()
 });

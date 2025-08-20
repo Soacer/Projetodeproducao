@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    google.charts.load('current', { 'packages': ['gantt', 'timeline'] });
+    google.charts.load('current', { 'packages': ['gantt', 'timeline'], 'language': 'pt-BR' });
 
     // --- ELEMENTOS GERAIS ---
     const urlApi = 'https://script.google.com/macros/s/AKfycbzCLJyPh0RYo1yOb4gcw6eegtfzlq2H_L9GktFQXyos13Bxz57bvXGTtWGa_Ens3Wqnzg/exec';
@@ -9,8 +9,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- ESTADO GLOBAL (Dados em memória) ---
     let todosOsPlanosSalvos = [];
     let ultimoPlanejamento = [];
+    let ultimosPlanosSelecionados = []; // Guarda os últimos planos para redesenhar o gráfico
+    let modoDeVisualizacao = 'operacao'; // 'operacao' ou 'responsavel'
 
-    // --- LÓGICA DA ABA 1: CRIAR NOVO PLANEJamento ---
+    // --- LÓGICA DA ABA 1 (sem alterações) ---
     const formCriar = document.getElementById('form-planejamento');
     const selectOp = document.getElementById('select-op');
     const resultadoCriar = document.getElementById('resultado-planejamento');
@@ -34,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 selectOp.appendChild(option);
             });
         } catch (erro) {
-            console.error("Erro ao carregar OPs para seleção:", erro);
             selectOp.innerHTML = `<option value="">Erro: ${erro.message}</option>`;
         }
     }
@@ -53,10 +54,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const url = `${urlApi}?action=calcularLinhaDoTempo&id_op=${dadosOp.id}&dataHoraInicio=${dataHoraInicio}`;
             const resposta = await fetch(url);
             const planejamento = await resposta.json();
+
+            // ==========================================================
+            // ADICIONE ESTA LINHA PARA DIAGNÓSTICO:
+            console.log('DADOS RECEBIDOS DO BACKEND:', planejamento);
+            // ==========================================================
+
             if (planejamento.erro) throw new Error(planejamento.mensagem);
-
             ultimoPlanejamento = planejamento.map(tarefa => ({ ...tarefa, op: dadosOp.op, produto: dadosOp.produto }));
-
             resultadoCriar.classList.remove('hidden');
             google.charts.setOnLoadCallback(() => desenharGraficoGantt(ultimoPlanejamento, ganttChartDivCriar));
         } catch (erro) {
@@ -90,28 +95,34 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- LÓGICA DA ABA 2: VISUALIZAR E COMPARAR PLANOS SALVOS ---
     const acordeonContainer = document.getElementById('acordeon-planos');
     const filtrosStatus = document.querySelectorAll('input[name="filtro-status"]');
-    const selectOp1 = document.getElementById('select-op-1');
-    const selectOp2 = document.getElementById('select-op-2');
     const btnComparar = document.getElementById('btn-comparar-planos');
     const resultadoComparacao = document.getElementById('resultado-comparacao');
     const ganttChartDivComparativo = document.getElementById('gantt-chart-comparativo');
+    const btnViewOperacao = document.getElementById('btn-view-operacao');
+    const btnViewResponsavel = document.getElementById('btn-view-responsavel');
 
-    async function carregarPlanosSalvos() {
-        if (!acordeonContainer) return;
-        acordeonContainer.innerHTML = `<div class="carregando">Carregando planejamentos...</div>`;
-        try {
-            const url = `${urlApi}?action=getTodosOsPlanejamentos&cacheBust=${new Date().getTime()}`;
-            const resposta = await fetch(url);
-            if (!resposta.ok) throw new Error('Falha ao buscar planejamentos.');
-            todosOsPlanosSalvos = await resposta.json();
-            if (todosOsPlanosSalvos.erro) throw new Error(todosOsPlanosSalvos.mensagem);
+async function carregarPlanosSalvos() {
+    if (!acordeonContainer) return;
+    acordeonContainer.innerHTML = `<div class="carregando">Carregando planejamentos...</div>`;
+    try {
+        const url = `${urlApi}?action=getTodosOsPlanejamentos&cacheBust=${new Date().getTime()}`;
+        const resposta = await fetch(url);
+        if (!resposta.ok) throw new Error('Falha ao buscar planejamentos.');
+        todosOsPlanosSalvos = await resposta.json();
 
-            filtrarPlanos();
-            carregarOpsParaComparacao();
-        } catch (erro) {
-            acordeonContainer.innerHTML = `<div class="erro">Erro: ${erro.message}</div>`;
-        }
+        // ==========================================================
+        // ADICIONE ESTA LINHA PARA DIAGNÓSTICO:
+        console.log('DADOS CARREGADOS PARA A ABA "VISUALIZAR":', todosOsPlanosSalvos);
+        // ==========================================================
+
+        if (todosOsPlanosSalvos.erro) throw new Error(todosOsPlanosSalvos.mensagem);
+
+        filtrarPlanos();
+        carregarOpsParaComparacao();
+    } catch (erro) {
+        acordeonContainer.innerHTML = `<div class="erro">Erro: ${erro.message}</div>`;
     }
+}
 
     function renderizarPlanos(planosParaExibir) {
         acordeonContainer.innerHTML = '';
@@ -178,26 +189,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function handleComparacao() {
         const selectOpsComp = document.getElementById('select-ops-comparacao');
-
-        // Pega todos os valores das opções selecionadas
         const opsSelecionadas = [...selectOpsComp.selectedOptions].map(opt => opt.value);
-
         if (opsSelecionadas.length < 2) {
             alert("Por favor, selecione pelo menos duas OPs para comparar.");
             return;
         }
-
-        // Filtra a lista de todos os planos para obter apenas os que foram selecionados
         const planosSelecionados = todosOsPlanosSalvos.filter(p => opsSelecionadas.includes(p.op));
-
         if (planosSelecionados.length !== opsSelecionadas.length) {
             alert("Não foi possível encontrar os dados de uma ou mais OPs selecionadas.");
             return;
         }
 
+        ultimosPlanosSelecionados = planosSelecionados; // Salva os dados para re-desenhar
+
         resultadoComparacao.classList.remove('hidden');
-        // Passa a lista inteira de planos para a função de desenho
-        google.charts.setOnLoadCallback(() => desenharTimelineComparativa(planosSelecionados, ganttChartDivComparativo));
+        google.charts.setOnLoadCallback(() => desenharTimelineComparativa(ultimosPlanosSelecionados, ganttChartDivComparativo));
     }
 
 
@@ -236,31 +242,43 @@ document.addEventListener('DOMContentLoaded', function () {
         chart.draw(data, options);
     }
 
-    // Substitua a função desenharGraficoGanttComparativo inteira por esta nova função
     function desenharTimelineComparativa(listaDePlanos, container) {
-        // A paleta de cores continua sendo usada
-        const coresPaleta = [
-            "#3366cc", "#dc3912", "#ff9900", "#109618", "#990099",
-            "#0099c6", "#dd4477", "#66aa00", "#b82e2e"
-        ];
-
+        const coresPaleta = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e"];
         const data = new google.visualization.DataTable();
-        // A estrutura de colunas do Timeline é diferente:
-        data.addColumn({ type: 'string', id: 'Operação' });
-        data.addColumn({ type: 'string', id: 'OP' });
+
+        // Adiciona as colunas. A terceira é uma coluna especial "tooltip" que permite HTML.
+        data.addColumn({ type: 'string', id: 'Agrupador' }); // Ex: "Cortar Acrílico" ou "João Silva"
+        data.addColumn({ type: 'string', id: 'Rótulo da Barra' }); // Ex: "OP 001"
+        data.addColumn({ type: 'string', role: 'tooltip', 'p': { 'html': true } }); // Tooltip customizado
         data.addColumn({ type: 'date', id: 'Início' });
         data.addColumn({ type: 'date', id: 'Fim' });
 
         let todasAsRows = [];
+        let labelsUnicas = new Set(); // Para calcular a altura do gráfico
 
-        // Itera sobre a lista de planos para criar as linhas
         listaDePlanos.forEach(plano => {
-            const rowsDoPlano = plano.planejamento.map(tarefa => [
-                tarefa.nome_tarefa,      // Coluna 1: O nome da operação (será a linha do gráfico)
-                `OP ${plano.op}`,        // Coluna 2: O rótulo da barra (qual OP ela representa)
-                new Date(tarefa.inicio), // Coluna 3: Data de início
-                new Date(tarefa.fim)     // Coluna 4: Data de fim
-            ]);
+            const rowsDoPlano = plano.planejamento.map(tarefa => {
+                // Cria o conteúdo HTML do tooltip
+                const tooltipHtml = `<div style="padding:10px; font-family: Arial, sans-serif;">
+                    <strong>${tarefa.nome_tarefa} (OP ${plano.op})</strong><br>
+                    <strong>Responsável:</strong> ${tarefa.responsavel || 'Não definido'}<br>
+                    <strong>Início:</strong> ${new Date(tarefa.inicio).toLocaleString()}<br>
+                    <strong>Fim:</strong> ${new Date(tarefa.fim).toLocaleString()}
+                 </div>`;
+
+                let agrupador, rotuloBarra;
+
+                if (modoDeVisualizacao === 'operacao') {
+                    agrupador = tarefa.nome_tarefa;
+                    rotuloBarra = `OP ${plano.op}`;
+                } else { // modoDeVisualizacao === 'responsavel'
+                    agrupador = tarefa.responsavel || 'Não Atribuído';
+                    rotuloBarra = `${tarefa.nome_tarefa} (OP ${plano.op})`;
+                }
+
+                labelsUnicas.add(agrupador);
+                return [agrupador, rotuloBarra, tooltipHtml, new Date(tarefa.inicio), new Date(tarefa.fim)];
+            });
             todasAsRows.push(...rowsDoPlano);
         });
 
@@ -268,81 +286,78 @@ document.addEventListener('DOMContentLoaded', function () {
             container.innerHTML = '<div class="aviso">Não há dados para exibir o gráfico.</div>';
             return;
         }
-
         data.addRows(todasAsRows);
 
-        // Calcula a altura ideal, considerando um número único de operações
-        const numOperacoesUnicas = new Set(todasAsRows.map(row => row[0])).size;
-        const alturaGrafico = numOperacoesUnicas * 41 + 60; // 41px por linha + 60px para eixos
-
+        const alturaGrafico = labelsUnicas.size * 41 + 60;
         const options = {
             height: alturaGrafico,
-            colors: coresPaleta, // O Timeline usa um array simples de cores
+            colors: coresPaleta,
+            tooltip: { isHtml: true }, // Habilita o tooltip HTML
             timeline: {
-                groupByRowLabel: true, // Agrupa as barras pela primeira coluna (nome da operação)
+                groupByRowLabel: true,
                 rowLabelStyle: { fontName: 'Helvetica', fontSize: 13 },
                 barLabelStyle: { fontName: 'Arial', fontSize: 11 }
             }
         };
 
-        // Agora instanciamos um google.visualization.Timeline
         const chart = new google.visualization.Timeline(container);
-
-        // A lógica da legenda continua a mesma
         const legendaContainer = document.getElementById('legenda-comparativo');
-        if (legendaContainer) {
-            legendaContainer.innerHTML = '';
-            listaDePlanos.forEach((plano, index) => {
-                const cor = coresPaleta[index % coresPaleta.length];
-                const legendaItem = document.createElement('div');
-                legendaItem.className = 'legenda-item';
-                legendaItem.innerHTML = `
-                <span class="legenda-cor" style="background-color: ${cor};"></span>
-                OP ${plano.op}
-            `;
-                legendaContainer.appendChild(legendaItem);
-            });
-        }
 
+        google.visualization.events.addListener(chart, 'ready', function () {
+            if (legendaContainer) {
+                legendaContainer.innerHTML = '';
+                listaDePlanos.forEach((plano, index) => {
+                    const cor = coresPaleta[index % coresPaleta.length];
+                    const legendaItem = document.createElement('div');
+                    legendaItem.className = 'legenda-item';
+                    legendaItem.innerHTML = `<span class="legenda-cor" style="background-color: ${cor};"></span> OP ${plano.op}`;
+                    legendaContainer.appendChild(legendaItem);
+                });
+            }
+        });
         chart.draw(data, options);
     }
 
-    // ==========================================================
-    // CÓDIGO CORRIGIDO - LÓGICA DE NAVEGAÇÃO DAS ABAS
-    // ==========================================================
+    // --- LÓGICA DE NAVEGAÇÃO E EVENTOS ---
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
-            // Remove a classe 'active' de todos os botões de aba
             tabs.forEach(item => item.classList.remove('active'));
-            // Adiciona a classe 'active' apenas no botão clicado
             tab.classList.add('active');
-
-            // Pega o alvo (o ID do conteúdo) do atributo data-tab
             const target = document.getElementById(tab.dataset.tab);
-
-            // Esconde todos os conteúdos de aba
             tabContents.forEach(content => content.classList.remove('active'));
-
-            // Mostra apenas o conteúdo da aba alvo, se ele existir
-            if (target) {
-                target.classList.add('active');
-            }
-
-            // Se a aba clicada for a de visualizar, recarrega os planos
+            if (target) target.classList.add('active');
             if (tab.dataset.tab === 'visualizar-planos') {
                 carregarPlanosSalvos();
             }
         });
     });
 
+    // Listeners para os botões de modo de visualização
+    btnViewOperacao.addEventListener('click', () => {
+        modoDeVisualizacao = 'operacao';
+        btnViewOperacao.classList.add('active');
+        btnViewResponsavel.classList.remove('active');
+        if (ultimosPlanosSelecionados.length > 0) {
+            desenharTimelineComparativa(ultimosPlanosSelecionados, ganttChartDivComparativo);
+        }
+    });
 
-    // --- EVENT LISTENERS E EXECUÇÃO INICIAL ---
+    btnViewResponsavel.addEventListener('click', () => {
+        modoDeVisualizacao = 'responsavel';
+        btnViewResponsavel.classList.add('active');
+        btnViewOperacao.classList.remove('active');
+        if (ultimosPlanosSelecionados.length > 0) {
+            desenharTimelineComparativa(ultimosPlanosSelecionados, ganttChartDivComparativo);
+        }
+    });
+
     if (formCriar) formCriar.addEventListener('submit', handlePlanejamento);
     if (btnSalvarPlano) btnSalvarPlano.addEventListener('click', salvarPlano);
     filtrosStatus.forEach(filtro => filtro.addEventListener('change', filtrarPlanos));
     if (btnComparar) btnComparar.addEventListener('click', handleComparacao);
 
-    // Carrega os dados iniciais ao entrar na página
+    // Carrega os dados iniciais
     carregarOpsParaSelecao();
     carregarPlanosSalvos();
+
 });
