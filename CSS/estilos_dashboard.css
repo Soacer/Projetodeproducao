@@ -1,4 +1,5 @@
 @import url('estilos_globais.css');
+
 body {
     font-family: Arial, Helvetica, sans-serif;
     background-color: #f4f7f6;
@@ -6,19 +7,40 @@ body {
     margin: 0;
     padding: 20px;
 }
+
 .container {
     max-width: 1000px;
     margin: 0 auto;
     background-color: #fff;
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
 }
-header { text-align: center; margin-bottom: 40px; }
-.logo { font-size: 28px; font-weight: bold; }
-.logo span { color: red; }
-h1 { font-size: 26px; color: #2c3e50; margin: 10px 0; }
-p { color: #555; }
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: red;
+}
+
+h1 {
+    font-size: 26px;
+    color: #2c3e50;
+    margin: 10px 0;
+}
+
+p {
+    color: #555;
+}
+
 .chart-container {
     position: relative;
     width: 100%;
@@ -29,5 +51,43 @@ p { color: #555; }
 .chart-container {
     position: relative;
     width: 100%;
-    min-height: 500px; /* Garante uma altura mínima para o gráfico */
+    min-height: 500px;
+    /* Garante uma altura mínima para o gráfico */
+}
+
+/* Adicione estas regras ao seu arquivo estilos_dashboard.css */
+
+/* --- ESTILOS PARA O SISTEMA DE ABAS --- */
+.tabs-container {
+    display: flex;
+    border-bottom: 2px solid var(--cor-borda);
+    margin-bottom: 30px;
+}
+
+.tab-link {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--cor-texto-suave);
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    /* Alinha com a borda principal */
+}
+
+.tab-link.active {
+    color: var(--cor-primaria);
+    border-bottom-color: var(--cor-primaria);
+}
+
+.tab-content {
+    display: none;
+    /* Esconde todas as abas por padrão */
+}
+
+.tab-content.active {
+    display: block;
+    /* Mostra apenas a aba ativa */
 }
