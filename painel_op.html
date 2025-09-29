@@ -19,30 +19,33 @@
             <li class="menu-item-has-children">
                 <a href="#"><i class="fas fa-industry"></i> Ordens de Produção <span class="arrow-icon"></span></a>
                 <ul class="submenu">
-                    <li><a href="formulario.html">Nova Ordem</a></li>
-                    <li><a href="painel_op.html">Painel Interativo</a></li>
-                    <li><a href="visualizar_op.html">Visualizar OP</a></li>
+                    <li><a href="formulario.html"><i class="fas fa-file-circle-plus"></i> Nova Ordem </a></li>
+                    <li><a href="painel_op.html"><i class="fas fa-table-columns"></i> Painel Interativo </a></li>
+                    <li><a href="visualizar_op.html"><i class="fas fa-magnifying-glass"></i> Visualizar OP </a></li>
                 </ul>
             </li>
             <li class="menu-item-has-children">
                 <a href="#"><i class="fas fa-sitemap"></i> Roteiros <span class="arrow-icon"></span></a>
                 <ul class="submenu">
-                    <li><a href="cadastro_roteiro.html">Cadastrar Roteiro</a></li>
-                    <li><a href="edicao_roteiro.html">Editar Roteiro</a></li>
+                    <li><a href="cadastro_roteiro.html"><i class="fas fa-route"></i> Cadastrar Roteiro </a></li>
+                    <li><a href="edicao_roteiro.html"><i class="fas fa-pen-to-square"></i> Editar Roteiro </a></li>
                 </ul>
             </li>
             <li class="menu-item-has-children">
                 <a href="#"><i class="fa-solid fa-gear"></i> Manutenção <span class="arrow-icon"></span></a>
                 <ul class="submenu">
-                    <li><a href="manutencao.html"> Cadastro de Manutenção </a></li>
+                    <li><a href="manutencao.html"><i class="fas fa-screwdriver-wrench"></i> Cadastro de Manutenção </a>
+                    </li>
                 </ul>
             </li>
             <li class="menu-item-has-children">
                 <a href="#"><i class="fa fa-clipboard"></i> Ferramentas de Análise <span class="arrow-icon"></span></a>
                 <ul class="submenu">
-                    <li><a href="planejamento.html"><i class="fa fa-area-chart" aria-hidden="true"></i> Cadastro e Visualização de Planejamentos </a></li>
+                    <li><a href="planejamento.html"><i class="fa fa-area-chart" aria-hidden="true"></i> Cadastro e
+                            Visualização de Planejamentos </a></li>
                     <li><a href="caminho_critico.html"><i class="fas fa-project-diagram"></i> Caminho Crítico</a></li>
-                    <li><a href="dashboard.html"><i class="fas fa-chart-bar"></i> Gráfico de Progresso das OP's </a></li>
+                    <li><a href="dashboard.html"><i class="fas fa-chart-bar"></i> Gráfico de Progresso das OP's </a>
+                    </li>
                 </ul>
             </li>
     </aside>
@@ -55,10 +58,57 @@
 
         <main>
             <div class="card">
-                <input type="text" id="filtro-ops" placeholder="Filtrar por Nº da OP ou Produto...">
+                <div class="painel-controles">
+                    <input type="text" id="filtro-ops" placeholder="Filtrar por Nº da OP ou Produto...">
+
+                    <div class="grupo-botoes-ordenacao">
+                        <span>Ordenar por Nº OP:</span>
+                        <button id="btn-ordem-crescente" class="btn-ordenacao active" title="Ordem Crescente">
+                            <i class="fas fa-arrow-down-1-9"></i>
+                        </button>
+                        <button id="btn-ordem-decrescente" class="btn-ordenacao" title="Ordem Decrescente">
+                            <i class="fas fa-arrow-down-9-1"></i>
+                        </button>
+                    </div>
+                    <button id="btn-abrir-modal-lote" class="btn-acao-lote">
+                        <i class="fas fa-tasks"></i> Apontamento em Lote
+                    </button>
+                </div>
                 <div id="acordeon-ops" class="acordeon-container"></div>
             </div>
         </main>
+    </div>
+
+    <div id="modal-lote-overlay" class="modal-overlay">
+        <div id="modal-lote" class="modal">
+            <div class="modal-header">
+                <h2>Apontamento de Operações em Lote</h2>
+                <button class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Selecione uma operação abaixo para concluir todas as suas instâncias pendentes de uma só vez.</p>
+                <div id="lista-operacoes-lote" class="lista-operacoes-lote">
+                </div>
+                <div id="form-lote-detalhes" class="form-lote-detalhes" style="display: none;">
+                    <h3 id="titulo-operacao-selecionada"></h3>
+                    <div class="lote-inputs">
+                        <div class="lote-input-group">
+                            <label for="lote-inicio">Início:</label>
+                            <input type="datetime-local" id="lote-inicio" required>
+                        </div>
+                        <div class="lote-input-group">
+                            <label for="lote-fim">Fim:</label>
+                            <input type="datetime-local" id="lote-fim" required>
+                        </div>
+                        <div class="lote-input-group">
+                            <label for="lote-operador">Operador:</label>
+                            <input type="text" id="lote-operador" placeholder="Nome do Operador" required>
+                        </div>
+                    </div>
+                    <button id="btn-concluir-lote-modal">Concluir Operações</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="JS/script_sidebar.js"></script>

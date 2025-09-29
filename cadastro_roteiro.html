@@ -19,33 +19,36 @@
             <li class="menu-item-has-children">
                 <a href="#"><i class="fas fa-industry"></i> Ordens de Produção <span class="arrow-icon"></span></a>
                 <ul class="submenu">
-                    <li><a href="formulario.html">Nova Ordem</a></li>
-                    <li><a href="painel_op.html">Painel Interativo</a></li>
-                    <li><a href="visualizar_op.html">Visualizar OP</a></li>
+                    <li><a href="formulario.html"><i class="fas fa-file-circle-plus"></i> Nova Ordem </a></li>
+                    <li><a href="painel_op.html"><i class="fas fa-table-columns"></i> Painel Interativo </a></li>
+                    <li><a href="visualizar_op.html"><i class="fas fa-magnifying-glass"></i> Visualizar OP </a></li>
                 </ul>
             </li>
             <li class="menu-item-has-children">
                 <a href="#"><i class="fas fa-sitemap"></i> Roteiros <span class="arrow-icon"></span></a>
                 <ul class="submenu">
-                    <li><a href="cadastro_roteiro.html">Cadastrar Roteiro</a></li>
-                    <li><a href="edicao_roteiro.html">Editar Roteiro</a></li>
+                    <li><a href="cadastro_roteiro.html"><i class="fas fa-route"></i> Cadastrar Roteiro </a></li>
+                    <li><a href="edicao_roteiro.html"><i class="fas fa-pen-to-square"></i> Editar Roteiro </a></li>
                 </ul>
             </li>
             <li class="menu-item-has-children">
                 <a href="#"><i class="fa-solid fa-gear"></i> Manutenção <span class="arrow-icon"></span></a>
                 <ul class="submenu">
-                    <li><a href="manutencao.html"> Cadastro de Manutenção </a></li>
+                    <li><a href="manutencao.html"><i class="fas fa-screwdriver-wrench"></i> Cadastro de Manutenção </a>
+                    </li>
                 </ul>
             </li>
             <li class="menu-item-has-children">
                 <a href="#"><i class="fa fa-clipboard"></i> Ferramentas de Análise <span class="arrow-icon"></span></a>
                 <ul class="submenu">
-                    <li><a href="planejamento.html"><i class="fa fa-area-chart" aria-hidden="true"></i> Cadastro e Visualização de Planejamentos </a></li>
+                    <li><a href="planejamento.html"><i class="fa fa-area-chart" aria-hidden="true"></i> Cadastro e
+                            Visualização de Planejamentos </a></li>
                     <li><a href="caminho_critico.html"><i class="fas fa-project-diagram"></i> Caminho Crítico</a></li>
-                    <li><a href="dashboard.html"><i class="fas fa-chart-bar"></i> Gráfico de Progresso das OP's </a></li>
+                    <li><a href="dashboard.html"><i class="fas fa-chart-bar"></i> Gráfico de Progresso das OP's </a>
+                    </li>
                 </ul>
             </li>
-    </aside>
+        </aside>
 
     <div class="main-content">
         <header class="page-header">
@@ -78,8 +81,29 @@
                                 required></div>
                         <div class="campo"><label for="op-tempo">Tempo Estimado (h):</label><input type="number"
                                 id="op-tempo" step="0.1" min="0" required></div>
-                        <div class="campo"><label for="op-responsavel">Responsável:</label><input type="text"
-                                id="op-responsavel" required></div>
+                        
+                        <div class="campo">
+                            <label for="op-responsavel">Responsável:</label>
+                            <select id="op-responsavel" required>
+                                <option value="" disabled selected>Selecione um colaborador</option>
+                                <option value="ALEX">ALEX</option>
+                                <option value="ATAADSON">ATAADSON</option>
+                                <option value="CARLOS">CARLOS</option>
+                                <option value="EDVAN">EDVAN</option>
+                                <option value="RODRIGO">RODRIGO</option>
+                                <option value="FELIPE">FELIPE</option>
+                                <option value="ANDERSON">ANDERSON</option>
+                                <option value="HUMBERTO">HUMBERTO</option>
+                                <option value="MATHEUS">MATHEUS</option>
+                                <option value="RAFAEL">RAFAEL</option>
+                                <option value="FLORISVALDO">FLORISVALDO</option>
+                                <option value="MATHEUS">MATHEUS</option>
+                                <option value="REINALDO">REINALDO</option>
+                                <option value="GABRIEL">GABRIEL</option>
+                                <option value="ALISSON">ALISSON</option>
+                                <option value="EDNILSON">EDNILSON</option>
+                            </select>
+                        </div>
                         <div class="campo-dependencias">
                             <label>Esta operação depende de (Opcional):</label>
                             <div id="lista-dependencias-checkboxes" class="checkbox-container">

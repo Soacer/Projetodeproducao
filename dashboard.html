@@ -9,42 +9,47 @@
     <link rel="stylesheet" href="CSS/estilos_dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" href="IMG/a+.ico">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 
 <body>
     <aside class="sidebar">
         <div class="sidebar-header">algetec<span>+</span></div>
         <ul class="nav-menu">
-            <li><a href="home.html" class="active"><i class="fas fa-tachometer-alt"></i> Início</a></li>
+            <li><a href="home.html"><i class="fas fa-tachometer-alt"></i> Início</a></li>
             <li class="menu-item-has-children">
                 <a href="#"><i class="fas fa-industry"></i> Ordens de Produção <span class="arrow-icon"></span></a>
                 <ul class="submenu">
-                    <li><a href="formulario.html">Nova Ordem</a></li>
-                    <li><a href="painel_op.html">Painel Interativo</a></li>
-                    <li><a href="visualizar_op.html">Visualizar OP</a></li>
+                    <li><a href="formulario.html"><i class="fas fa-file-circle-plus"></i> Nova Ordem </a></li>
+                    <li><a href="painel_op.html"><i class="fas fa-table-columns"></i> Painel Interativo </a></li>
+                    <li><a href="visualizar_op.html"><i class="fas fa-magnifying-glass"></i> Visualizar OP </a></li>
                 </ul>
             </li>
             <li class="menu-item-has-children">
                 <a href="#"><i class="fas fa-sitemap"></i> Roteiros <span class="arrow-icon"></span></a>
                 <ul class="submenu">
-                    <li><a href="cadastro_roteiro.html">Cadastrar Roteiro</a></li>
-                    <li><a href="edicao_roteiro.html">Editar Roteiro</a></li>
+                    <li><a href="cadastro_roteiro.html"><i class="fas fa-route"></i> Cadastrar Roteiro </a></li>
+                    <li><a href="edicao_roteiro.html"><i class="fas fa-pen-to-square"></i> Editar Roteiro </a></li>
                 </ul>
             </li>
             <li class="menu-item-has-children">
                 <a href="#"><i class="fa-solid fa-gear"></i> Manutenção <span class="arrow-icon"></span></a>
                 <ul class="submenu">
-                    <li><a href="manutencao.html"> Cadastro de Manutenção </a></li>
+                    <li><a href="manutencao.html"><i class="fas fa-screwdriver-wrench"></i> Cadastro de Manutenção </a>
+                    </li>
                 </ul>
             </li>
             <li class="menu-item-has-children">
-                <a href="#"><i class="fa fa-clipboard"></i> Ferramentas de Análise <span class="arrow-icon"></span></a>
-                <ul class="submenu">
-                    <li><a href="planejamento.html">Planejamento</a></li>
-                    <li><a href="caminho_critico.html">Caminho Crítico</a></li>
-                    <li><a href="dashboard.html">Dashboards</a></li>
+                <a href="#" class="active"><i class="fa fa-clipboard"></i> Ferramentas de Análise <span class="arrow-icon"></span></a>
+                <ul class="submenu" style="display: block;">
+                    <li><a href="planejamento.html"><i class="fa fa-area-chart" aria-hidden="true"></i> Cadastro e
+                            Visualização de Planejamentos </a></li>
+                    <li><a href="caminho_critico.html"><i class="fas fa-project-diagram"></i> Caminho Crítico</a></li>
+                    <li><a href="dashboard.html" class="active"><i class="fas fa-chart-bar"></i> Gráfico de Progresso das OP's </a>
+                    </li>
                 </ul>
             </li>
     </aside>
@@ -59,6 +64,7 @@
             <div class="tabs-container">
                 <button class="tab-link active" data-tab="progresso-ops">Progresso das OPs</button>
                 <button class="tab-link" data-tab="planejado-realizado">Planejado vs. Realizado</button>
+                <button class="tab-link" data-tab="gantt-concluidas">Gantt de Atividades</button>
             </div>
 
             <div id="progresso-ops" class="tab-content active">
@@ -72,7 +78,21 @@
                     <canvas id="grafico-planejado-realizado"></canvas>
                 </div>
             </div>
-            </main>
+
+            <div id="gantt-concluidas" class="tab-content">
+                <div class="card">
+                    <div class="chart-controls">
+                        <span>Agrupar por:</span>
+                        <button class="btn-agrupar active" data-group-by="op_numero">Operação</button>
+                        <button class="btn-agrupar" data-group-by="produto">Produto</button>
+                        <button class="btn-agrupar" data-group-by="responsavel">Responsável</button>
+                    </div>
+                    <div class="chart-container">
+                        <div id="grafico-gantt-concluidas"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
     <script src="JS/script_sidebar.js"></script>
