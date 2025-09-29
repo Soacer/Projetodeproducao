@@ -20,13 +20,18 @@
 }
 
 /* Mensagens de status (Carregando, Erro, Aviso) */
-.carregando, .erro, .aviso {
+.carregando,
+.erro,
+.aviso {
     padding: 20px;
     text-align: center;
     font-weight: 500;
     color: var(--cor-texto-suave);
 }
-.erro { color: #dc3545; }
+
+.erro {
+    color: #dc3545;
+}
 
 /* --- Estilo do Acordeão / Collapse --- */
 
@@ -39,7 +44,8 @@
     width: 100%;
     border: 1px solid var(--cor-borda);
     border-radius: 5px;
-    margin-top: 10px; /* Espaçamento entre os botões */
+    margin-top: 10px;
+    /* Espaçamento entre os botões */
     text-align: left;
     outline: none;
     font-size: 16px;
@@ -60,18 +66,39 @@
 }
 
 .op-item button.op-collapse-btn.active {
-    background-color: #e7f1ff; /* Azul claro quando ativo */
+    background-color: #e7f1ff;
+    /* Azul claro quando ativo */
     border-color: var(--cor-primaria);
     border-radius: 5px 5px 0 0;
 }
 
 /* Grupos de informação dentro do botão */
-.op-info-group { flex-grow: 1; }
-.op-info { font-weight: bold; font-size: 1.1em; color: var(--cor-texto); }
-.op-produto { font-size: 0.9em; color: var(--cor-texto-suave); margin-left: 15px; }
+.op-info-group {
+    flex-grow: 1;
+}
 
-.op-details-group { display: flex; align-items: center; gap: 20px; }
-.op-date { font-size: 0.9em; color: #666; }
+.op-info {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: var(--cor-texto);
+}
+
+.op-produto {
+    font-size: 0.9em;
+    color: var(--cor-texto-suave);
+    margin-left: 15px;
+}
+
+.op-details-group {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.op-date {
+    font-size: 0.9em;
+    color: #666;
+}
 
 /* "Badge" de Status */
 .status {
@@ -83,8 +110,14 @@
     color: #fff;
     display: inline-block;
 }
-.status[data-status="Em Andamento"] { background-color: var(--cor-primaria); }
-.status[data-status="Concluído"] { background-color: #28a745; }
+
+.status[data-status="Em Andamento"] {
+    background-color: var(--cor-primaria);
+}
+
+.status[data-status="Concluído"] {
+    background-color: #28a745;
+}
 
 
 /* Área que expande/recolhe */
@@ -94,7 +127,8 @@
     border: 1px solid var(--cor-borda);
     border-top: none;
     border-radius: 0 0 5px 5px;
-    max-height: 0; /* Começa fechado */
+    max-height: 0;
+    /* Começa fechado */
     overflow: hidden;
     transition: max-height 0.3s ease-out;
 }
@@ -109,16 +143,22 @@
 
 .operacao-item {
     display: flex;
-    flex-wrap: wrap; /* Permite que os campos de data quebrem a linha em telas menores */
+    flex-wrap: wrap;
+    /* Permite que os campos de data quebrem a linha em telas menores */
     align-items: center;
     padding: 15px 5px;
     border-bottom: 1px solid #f1f1f1;
-    gap: 15px 10px; /* Espaço vertical e horizontal entre os elementos */
+    gap: 15px 10px;
+    /* Espaço vertical e horizontal entre os elementos */
 }
-.operacao-item:last-child { border-bottom: none; }
+
+.operacao-item:last-child {
+    border-bottom: none;
+}
 
 .operacao-checkbox-label {
-    flex-grow: 1; /* Faz a descrição da operação ocupar o espaço livre */
+    flex-grow: 1;
+    /* Faz a descrição da operação ocupar o espaço livre */
     display: flex;
     align-items: center;
     min-width: 250px;
@@ -127,7 +167,7 @@
 
 .operacao-item input[type="checkbox"] {
     margin-right: 12px;
-    width: 18px; 
+    width: 18px;
     height: 18px;
     flex-shrink: 0;
 }
@@ -137,11 +177,13 @@
     gap: 8px;
     align-items: center;
 }
+
 .datetime-container label {
     font-size: 12px;
     font-weight: bold;
     color: #555;
 }
+
 .datetime-container input[type="datetime-local"] {
     padding: 5px;
     border: 1px solid #ccc;
@@ -149,35 +191,259 @@
 }
 
 .op-collapse-content button[type="submit"] {
-    align-self: flex-end; /* Alinha o botão à direita */
+    align-self: flex-end;
+    /* Alinha o botão à direita */
     margin: 15px 5px 15px 0;
     padding: 8px 16px;
     font-weight: bold;
-    background-color: #28a745; /* Verde de sucesso */
+    background-color: #28a745;
+    /* Verde de sucesso */
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
 }
+
 .op-collapse-content button:disabled {
     background-color: #aaa;
     cursor: not-allowed;
 }
+
 .operador-container {
     display: flex;
     gap: 10px;
     align-items: center;
-    flex-grow: 1; /* Faz o campo operador tentar ocupar espaço */
+    flex-grow: 1;
+    /* Faz o campo operador tentar ocupar espaço */
     min-width: 200px;
 }
+
 .operador-container label {
     font-size: 12px;
     font-weight: bold;
     color: #555;
 }
+
 .operador-container input[type="text"] {
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 4px;
     width: 100%;
+}
+
+/* === ESTILOS PARA NOVOS CONTROLES E MODAL === */
+
+.painel-controles {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+#filtro-ops {
+    flex-grow: 1;
+    min-width: 250px;
+}
+
+.btn-acao-lote {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s;
+}
+
+.btn-acao-lote:hover {
+    background-color: #0056b3;
+}
+
+/* --- Estilos do Modal --- */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: none;
+    /* Inicia escondido */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal {
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 600px;
+    z-index: 1001;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.4em;
+    color: #333;
+}
+
+.modal-close-btn {
+    background: none;
+    border: none;
+    font-size: 2em;
+    cursor: pointer;
+    color: #888;
+    line-height: 1;
+}
+
+.modal-body p {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.lista-operacoes-lote {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.item-operacao-lote {
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.item-operacao-lote:last-child {
+    border-bottom: none;
+}
+
+.item-operacao-lote:hover {
+    background-color: #f5f5f5;
+}
+
+.item-operacao-lote.selecionado {
+    background-color: #e7f3ff;
+    font-weight: bold;
+}
+
+.item-operacao-lote .count {
+    background-color: #007bff;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+}
+
+.form-lote-detalhes {
+    margin-top: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+.lote-inputs {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin: 15px 0;
+}
+
+.lote-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex-grow: 1;
+}
+
+.lote-input-group label {
+    font-size: 0.9em;
+    color: #555;
+}
+
+.lote-input-group input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#btn-concluir-lote-modal {
+    width: 100%;
+    padding: 12px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+#btn-concluir-lote-modal:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* === ESTILOS PARA BOTÕES DE ORDENAÇÃO === */
+
+.grupo-botoes-ordenacao {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #f4f4f4;
+    padding: 5px;
+    border-radius: 6px;
+}
+
+.grupo-botoes-ordenacao span {
+    font-size: 0.9em;
+    color: #555;
+    margin-left: 5px;
+    font-weight: 500;
+}
+
+.btn-ordenacao {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    color: #333;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.1em;
+    /* Aumenta o tamanho do ícone */
+    line-height: 1;
+    transition: all 0.2s;
+}
+
+.btn-ordenacao:hover {
+    background-color: #e9e9e9;
+    border-color: #999;
+}
+
+/* Estilo do botão ATIVO */
+.btn-ordenacao.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
 }

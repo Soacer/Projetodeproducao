@@ -1,93 +1,84 @@
-@import url('estilos_globais.css');
-
-body {
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #f4f7f6;
-    color: #333;
-    margin: 0;
-    padding: 20px;
-}
-
-.container {
-    max-width: 1000px;
-    margin: 0 auto;
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
-}
-
-header {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.logo {
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.logo span {
-    color: red;
-}
-
-h1 {
-    font-size: 26px;
-    color: #2c3e50;
-    margin: 10px 0;
-}
-
-p {
-    color: #555;
-}
-
-.chart-container {
-    position: relative;
-    width: 100%;
-    /* A altura será controlada pelo aspect-ratio do gráfico no JS */
-}
-
-/* Estilos específicos para a página do dashboard */
-.chart-container {
-    position: relative;
-    width: 100%;
-    min-height: 500px;
-    /* Garante uma altura mínima para o gráfico */
-}
-
-/* Adicione estas regras ao seu arquivo estilos_dashboard.css */
-
-/* --- ESTILOS PARA O SISTEMA DE ABAS --- */
+/* Estilos para as abas de navegação */
 .tabs-container {
     display: flex;
-    border-bottom: 2px solid var(--cor-borda);
-    margin-bottom: 30px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
 }
-
 .tab-link {
     padding: 10px 20px;
     cursor: pointer;
     background-color: transparent;
-    border: none;
+    border: 1px solid transparent;
+    border-bottom: 0;
+    margin-bottom: -1px;
     font-size: 16px;
     font-weight: 500;
-    color: var(--cor-texto-suave);
-    border-bottom: 3px solid transparent;
-    margin-bottom: -2px;
-    /* Alinha com a borda principal */
+    color: #555;
 }
-
 .tab-link.active {
-    color: var(--cor-primaria);
-    border-bottom-color: var(--cor-primaria);
+    border-color: #ddd;
+    border-bottom-color: #fff;
+    background-color: #fff;
+    border-radius: 5px 5px 0 0;
+    color: #007bff;
 }
 
+/* Estilos para o conteúdo das abas */
 .tab-content {
     display: none;
-    /* Esconde todas as abas por padrão */
 }
-
 .tab-content.active {
     display: block;
-    /* Mostra apenas a aba ativa */
+}
+
+/* Estilos para os containers dos gráficos e controles */
+.chart-container {
+    padding: 20px;
+    position: relative;
+    min-height: 450px;
+}
+.chart-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 20px;
+    border-bottom: 1px solid #eee;
+}
+.chart-controls > span {
+    font-weight: 500;
+    color: #555;
+}
+
+/* Estilos para os botões de agrupamento */
+.btn-agrupar {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 5px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-left: 5px;
+    font-size: 14px;
+    color: #333;
+    transition: background-color 0.2s, color 0.2s;
+}
+.btn-agrupar:hover {
+    background-color: #e0e0e0;
+}
+.btn-agrupar.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+/* Mensagens de estado */
+.carregando,
+.erro,
+.aviso {
+    padding: 40px;
+    text-align: center;
+    color: #555;
+    font-size: 1.1em;
+}
+.erro {
+    color: #d9534f;
 }
