@@ -1,158 +1,197 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // URL da API (garanta que está correta)
+    // URL da sua API do Google Apps Script
     const urlApi = 'https://script.google.com/macros/s/AKfycbzCLJyPh0RYo1yOb4gcw6eegtfzlq2H_L9GktFQXyos13Bxz57bvXGTtWGa_Ens3Wqnzg/exec';
 
-    // Registra o plugin de labels para todos os gráficos
-    Chart.register(ChartDataLabels);
-
-    // --- LÓGICA DE NAVEGAÇÃO DAS ABAS ---
-    const tabs = document.querySelectorAll('.tab-link');
+    // --- LÓGICA DE NAVEGAÇÃO POR ABAS ---
+    const tabLinks = document.querySelectorAll('.tab-link');
     const tabContents = document.querySelectorAll('.tab-content');
 
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(item => item.classList.remove('active'));
-            tab.classList.add('active');
+    tabLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            tabLinks.forEach(l => l.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
 
-            const target = document.getElementById(tab.dataset.tab);
-            tabContents.forEach(content => content.classList.remove('active'));
-            if (target) target.classList.add('active');
+            const tabId = link.dataset.tab;
+            link.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
 
-            // Carrega o gráfico correspondente ao clicar na aba
-            if (tab.dataset.tab === 'progresso-ops') {
+            if (tabId === 'progresso-ops' && !window.progressoOpsChart) {
                 carregarGraficoProgresso();
-            } else if (tab.dataset.tab === 'planejado-realizado') {
+            } else if (tabId === 'planejado-realizado' && !window.planejadoRealizadoChart) {
                 carregarGraficoPlanejadoRealizado();
+            } else if (tabId === 'gantt-concluidas' && !window.ganttChart) {
+                carregarGraficoGantt();
             }
         });
     });
 
-    // --- LÓGICA DO GRÁFICO 1: PROGRESSO DAS OPS ---
-    const ctxProgresso = document.getElementById('grafico-progresso-ops');
-    let graficoProgresso = null; // Guarda a instância do gráfico para evitar duplicação
-
+    // --- GRÁFICO 1: PROGRESSO DAS OPS (Usa Chart.js) ---
     async function carregarGraficoProgresso() {
-        if (!ctxProgresso) return;
-        if (graficoProgresso) graficoProgresso.destroy(); // Destrói o gráfico antigo antes de desenhar um novo
-
+        const ctx = document.getElementById('grafico-progresso-ops').getContext('2d');
+        const container = ctx.canvas.parentElement;
+        container.innerHTML = '<div class="carregando">Carregando dados...</div>';
+        
         try {
-            const url = `${urlApi}?action=getDadosGrafico&cacheBust=${new Date().getTime()}`;
-            const resposta = await fetch(url);
-            if (!resposta.ok) throw new Error('Falha ao buscar dados para o gráfico de progresso.');
-            const dados = await resposta.json();
-            if (dados.erro) throw new Error(dados.mensagem);
+            const response = await fetch(`${urlApi}?action=getDadosGrafico`);
+            const data = await response.json();
+            if (data.erro) throw new Error(data.mensagem);
 
-            if (dados.length === 0) {
-                ctxProgresso.getContext('2d').fillText("Nenhuma OP 'Em Andamento' para exibir.", 10, 50);
+            if (!data || data.length === 0) {
+                container.innerHTML = `<div class="aviso">Nenhuma Ordem de Produção "Em Andamento" foi encontrada.</div>`;
                 return;
             }
 
-            const labels = dados.map(item => `OP: ${item.op}`);
-            const valoresProgresso = dados.map(item => item.progresso);
+            container.innerHTML = '';
+            container.appendChild(ctx.canvas);
 
-            graficoProgresso = new Chart(ctxProgresso, {
+            window.progressoOpsChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: labels,
+                    labels: data.map(item => item.op),
                     datasets: [{
-                        label: '% de Conclusão',
-                        data: valoresProgresso,
-                        backgroundColor: 'rgba(0, 123, 255, 0.8)',
-                        borderColor: 'rgba(0, 123, 255, 1)',
-                        borderWidth: 1,
-                        borderRadius: 4,
+                        label: 'Progresso (%)',
+                        data: data.map(item => item.progresso),
+                        backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
                     }]
                 },
                 options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        title: { display: true, text: 'Progresso por Ordem de Produção', font: { size: 18 } },
-                        datalabels: {
-                            color: '#ffffff',
-                            anchor: 'center',
-                            align: 'center',
-                            font: { weight: 'bold', size: 14 },
-                            formatter: (value) => value + '%'
-                        }
-                    },
-                    scales: {
-                        x: { max: 100, grid: { display: false }, ticks: { display: false } },
-                        y: { grid: { display: false }, ticks: { font: { size: 14 } } }
-                    }
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, title: { display: true, text: 'Progresso das Ordens de Produção' } },
+                    scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: '% Concluído' } } }
                 }
             });
-        } catch (erro) {
-            console.error("Erro ao carregar o gráfico de progresso:", erro);
+        } catch (error) {
+            container.innerHTML = `<div class="erro">Erro ao carregar gráfico: ${error.message}</div>`;
         }
     }
 
-    // --- LÓGICA DO GRÁFICO 2: PLANEJADO VS. REALIZADO ---
-    const ctxPlanejadoRealizado = document.getElementById('grafico-planejado-realizado');
-    let graficoPlanejadoRealizado = null; // Guarda a instância do gráfico
-
+    // --- GRÁFICO 2: PLANEJADO VS REALIZADO (Usa Chart.js) ---
     async function carregarGraficoPlanejadoRealizado() {
-        if (!ctxPlanejadoRealizado) return;
-        if (graficoPlanejadoRealizado) graficoPlanejadoRealizado.destroy();
-
+        const ctx = document.getElementById('grafico-planejado-realizado').getContext('2d');
+        const container = ctx.canvas.parentElement;
+        container.innerHTML = '<div class="carregando">Carregando dados...</div>';
+        
         try {
-            const url = `${urlApi}?action=getDadosPlanejadoRealizado&cacheBust=${new Date().getTime()}`;
-            const resposta = await fetch(url);
-            if (!resposta.ok) throw new Error('Falha ao buscar dados para o gráfico comparativo.');
-            const dados = await resposta.json();
-            if (dados.erro) throw new Error(dados.mensagem);
+            const response = await fetch(`${urlApi}?action=getDadosPlanejadoRealizado`);
+            const data = await response.json();
+            if (data.erro) throw new Error(data.mensagem);
 
-            // MUDANÇA 2: Novo formato dos labels para incluir o número da OP
-            const labels = dados.map(item => `${item.operacao} (OP ${item.op})`);
-            const temposPlanejados = dados.map(item => item.tempoPlanejado);
-            const temposReais = dados.map(item => item.tempoReal);
+            container.innerHTML = '';
+            container.appendChild(ctx.canvas);
 
-            graficoPlanejadoRealizado = new Chart(ctxPlanejadoRealizado, {
+            window.planejadoRealizadoChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Tempo Planejado (min)',
-                        data: temposPlanejados,
-                        backgroundColor: 'rgba(0, 123, 255, 0.7)',
-                        borderColor: 'rgba(0, 123, 255, 1)',
-                        borderWidth: 1
-                    }, {
-                        label: 'Tempo Real (min)',
-                        data: temposReais,
-                        backgroundColor: 'rgba(220, 53, 69, 0.7)',
-                        borderColor: 'rgba(220, 53, 69, 1)',
-                        borderWidth: 1
-                    }]
+                    labels: data.map(d => `${d.operacao} (OP: ${d.op})`),
+                    datasets: [
+                        { label: 'Tempo Planejado (min)', data: data.map(d => d.tempoPlanejado), backgroundColor: 'rgba(255, 159, 64, 0.6)' },
+                        { label: 'Tempo Real (min)', data: data.map(d => d.tempoReal), backgroundColor: 'rgba(75, 192, 192, 0.6)' }
+                    ]
                 },
                 options: {
-                    // MUDANÇA 1: Gráfico na horizontal
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: { display: true, text: 'Tempo Planejado vs. Tempo Real por Operação (em minutos)', font: { size: 18 } },
-                        legend: { position: 'top' }
-                    },
-                    scales: {
-                        x: { // Agora o eixo X é o de valores (tempo)
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Minutos'
-                            }
-                        }
-                    }
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { title: { display: true, text: 'Tempo Planejado vs. Tempo Real por Operação' } },
+                    scales: { y: { beginAtZero: true, title: { display: true, text: 'Minutos' } } }
                 }
             });
-
-        } catch (erro) {
-            console.error("Erro ao carregar o gráfico Planejado vs. Realizado:", erro);
+        } catch (error) {
+            container.innerHTML = `<div class="erro">Erro ao carregar gráfico: ${error.message}</div>`;
         }
     }
 
-    // Inicia o carregamento do primeiro gráfico ao carregar a página
+    // --- GRÁFICO 3: GANTT DE ATIVIDADES CONCLUÍDAS (Usa ApexCharts) ---
+    let ganttData = [];
+    let tipoAgrupamentoGantt = 'op_numero';
+
+    async function carregarGraficoGantt() {
+        const container = document.getElementById('grafico-gantt-concluidas');
+        container.innerHTML = `<div class="carregando">Carregando dados do Gantt...</div>`;
+        try {
+            const response = await fetch(`${urlApi}?action=getDadosGanttConcluidas&cacheBust=${new Date().getTime()}`);
+            const data = await response.json();
+            if (data.erro) throw new Error(data.mensagem);
+            ganttData = data;
+            renderizarGantt();
+        } catch (error) {
+            container.innerHTML = `<div class="erro">Erro ao carregar Gantt: ${error.message}</div>`;
+        }
+    }
+
+    function renderizarGantt() {
+        const container = document.getElementById('grafico-gantt-concluidas');
+        if (ganttData.length === 0) {
+            container.innerHTML = '<div class="aviso">Nenhuma atividade concluída encontrada para exibir.</div>';
+            return;
+        }
+
+        const groupedByOperation = ganttData.reduce((acc, item) => {
+            const opName = item.operacao;
+            if (!acc[opName]) acc[opName] = [];
+            acc[opName].push(item);
+            return acc;
+        }, {});
+        
+        const series = [];
+        const colorCache = {};
+        let colorIndex = 0;
+        const colors = ['#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0', '#546E7A', '#26a69a', '#D10CE8'];
+        const getKeyColor = (key) => {
+            if (!colorCache[key]) {
+                colorCache[key] = colors[colorIndex % colors.length];
+                colorIndex++;
+            }
+            return colorCache[key];
+        };
+        
+        for (const opName in groupedByOperation) {
+            const tasks = groupedByOperation[opName].map(task => {
+                const groupKey = task[tipoAgrupamentoGantt] || 'N/D';
+                return {
+                    x: groupKey,
+                    y: new Date(task.data_inicio).getTime(),
+                    fillColor: getKeyColor(groupKey),
+                    endDate: new Date(task.data_fim).getTime()
+                };
+            });
+            series.push({ name: opName, data: tasks });
+        }
+        
+        const options = {
+            series: series,
+            chart: { height: 800, type: 'rangeBar', toolbar: { show: true } },
+            plotOptions: { bar: { horizontal: true, distributed: true, dataLabels: { hideOverflowingLabels: false } } },
+            dataLabels: {
+                enabled: true,
+                formatter: (val, opts) => opts.w.config.series[opts.seriesIndex].data[opts.dataPointIndex].x,
+                style: { colors: ['#f8f8f8', '#fff'], fontWeight: 'bold' },
+                textAnchor: 'middle'
+            },
+            xaxis: { type: 'datetime', labels: { datetimeUTC: false, format: 'dd MMM' } },
+            yaxis: { show: true, labels: { maxWidth: 200 } },
+            grid: { row: { colors: ['#f3f4f5', '#fff'], opacity: 1 } },
+            tooltip: { x: { format: 'dd MMM yyyy HH:mm' } },
+            legend: { show: false }
+        };
+
+        container.innerHTML = '';
+        if (!window.ganttChart) {
+            window.ganttChart = new ApexCharts(container, options);
+            window.ganttChart.render();
+        } else {
+            window.ganttChart.updateOptions(options);
+        }
+    }
+
+    document.querySelectorAll('#gantt-concluidas .btn-agrupar').forEach(button => {
+        button.addEventListener('click', () => {
+            document.querySelectorAll('#gantt-concluidas .btn-agrupar').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            tipoAgrupamentoGantt = button.dataset.groupBy;
+            renderizarGantt();
+        });
+    });
+
     carregarGraficoProgresso();
 });

@@ -38,6 +38,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const produto = params.get('produto');
         const sequencia = params.get('sequencia');
         const roteiro = params.get('roteiro');
+        
+        // --- MODIFICAÇÃO 1: Obter a quantidade e converter para número ---
+        // Usamos parseFloat para garantir que é um número. Se não existir ou for inválido, usamos 1 como padrão.
+        const quantidadeOP = parseFloat(params.get('quantidade')) || 1;
+
         if (!produto || !sequencia || !roteiro) {
             corpoTabela.innerHTML = '<tr><td colspan="8">Faltam parâmetros. Volte ao formulário.</td></tr>';
             return;
@@ -57,10 +62,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             dadosDaPlanilha.forEach((linha) => {
                 const [dadoOrdem, dadoOperacao, dadoSetorMaquina, dadoTempoEstimado, dadoResponsavel] = linha;
+
+                // --- MODIFICAÇÃO 2: Calcular o tempo total ---
+                const tempoEstimadoUnitario = parseFloat(dadoTempoEstimado) || 0; // Converte o tempo para número
+                const tempoTotalCalculado = tempoEstimadoUnitario * quantidadeOP;
+
                 const novaLinha = document.createElement('tr');
+                
+                // --- MODIFICAÇÃO 3: Usar o valor calculado na tabela ---
+                // Usamos .toFixed(2) para formatar o número com duas casas decimais.
                 novaLinha.innerHTML = `
                     <td>${dadoOrdem || ''}</td><td>${dadoOperacao || ''}</td>      
-                    <td>${dadoSetorMaquina || ''}</td><td>${dadoTempoEstimado || ''}</td>
+                    <td>${dadoSetorMaquina || ''}</td><td>${tempoTotalCalculado > 0 ? tempoTotalCalculado.toFixed(2) : ''}</td>
                     <td>${dadoResponsavel || ''}</td><td></td><td></td><td></td>
                 `;
                 corpoTabela.appendChild(novaLinha);

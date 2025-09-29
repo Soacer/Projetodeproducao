@@ -9,15 +9,28 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- ESTADO GLOBAL (Dados em memória) ---
     let todosOsPlanosSalvos = [];
     let ultimoPlanejamento = [];
-    let ultimosPlanosSelecionados = []; // Guarda os últimos planos para redesenhar o gráfico
+    let ultimosPlanosSelecionados = [];
     let modoDeVisualizacao = 'operacao'; // 'operacao' ou 'responsavel'
+    let modoDeRotulo = 'op'; // 'op' ou 'produto'
 
-    // --- LÓGICA DA ABA 1 (sem alterações) ---
+    // --- ELEMENTOS DA ABA 1: CRIAR E EDITAR PLANO ---
     const formCriar = document.getElementById('form-planejamento');
     const selectOp = document.getElementById('select-op');
+    const inputDataHora = document.getElementById('data-hora-inicio');
     const resultadoCriar = document.getElementById('resultado-planejamento');
     const btnSalvarPlano = document.getElementById('btn-salvar-planejamento');
     const ganttChartDivCriar = document.getElementById('gantt-chart');
+
+    // --- ELEMENTOS DA ABA 2: VISUALIZAR E COMPARAR ---
+    const acordeonContainer = document.getElementById('acordeon-planos');
+    const filtrosStatus = document.querySelectorAll('input[name="filtro-status"]');
+    const btnComparar = document.getElementById('btn-comparar-planos');
+    const resultadoComparacao = document.getElementById('resultado-comparacao');
+    const ganttChartDivComparativo = document.getElementById('gantt-chart-comparativo');
+    const btnViewOperacao = document.getElementById('btn-view-operacao');
+    const btnViewResponsavel = document.getElementById('btn-view-responsavel');
+    const btnRotuloOp = document.getElementById('btn-rotulo-op');
+    const btnRotuloProduto = document.getElementById('btn-rotulo-produto');
 
     async function carregarOpsParaSelecao() {
         if (!selectOp) return;
@@ -48,18 +61,12 @@ document.addEventListener('DOMContentLoaded', function () {
         resultadoCriar.classList.add('hidden');
         try {
             const dadosOpString = selectOp.value;
-            const dataHoraInicio = document.getElementById('data-hora-inicio').value;
+            const dataHoraInicio = inputDataHora.value;
             if (!dadosOpString || !dataHoraInicio) throw new Error("Selecione uma OP e uma data/hora de início.");
             const dadosOp = JSON.parse(dadosOpString);
             const url = `${urlApi}?action=calcularLinhaDoTempo&id_op=${dadosOp.id}&dataHoraInicio=${dataHoraInicio}`;
             const resposta = await fetch(url);
             const planejamento = await resposta.json();
-
-            // ==========================================================
-            // ADICIONE ESTA LINHA PARA DIAGNÓSTICO:
-            console.log('DADOS RECEBIDOS DO BACKEND:', planejamento);
-            // ==========================================================
-
             if (planejamento.erro) throw new Error(planejamento.mensagem);
             ultimoPlanejamento = planejamento.map(tarefa => ({ ...tarefa, op: dadosOp.op, produto: dadosOp.produto }));
             resultadoCriar.classList.remove('hidden');
@@ -73,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     async function salvarPlano() {
-        if (ultimoPlanejamento.length === 0) {
+        if (!ultimoPlanejamento || ultimoPlanejamento.length === 0) {
             alert("Não há nenhum planejamento para salvar.");
             return;
         }
@@ -81,48 +88,55 @@ document.addEventListener('DOMContentLoaded', function () {
         btnSalvarPlano.textContent = 'Salvando...';
         try {
             const payload = { action: 'salvarPlanejamento', planejamento: ultimoPlanejamento };
-            await fetch(urlApi, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
+
+            // --- INÍCIO DA MUDANÇA ---
+            // Removemos o 'mode: no-cors' e agora processamos a resposta
+            const response = await fetch(urlApi, {
+                method: 'POST',
+                // O Apps Script funciona bem com 'text/plain' para o corpo do post
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json(); // Lemos a resposta do servidor
+
+            // Se o servidor retornou um erro, nós o exibimos
+            if (result.erro) {
+                throw new Error(result.mensagem);
+            }
+            // --- FIM DA MUDANÇA ---
+
             alert('Planejamento salvo com sucesso!');
             document.querySelector('.tab-link[data-tab="visualizar-planos"]').click();
+            // Força o recarregamento dos dados para refletir a alteração
+            carregarPlanosSalvos();
+
         } catch (erro) {
-            alert(`Erro ao salvar: ${erro.message}`);
+            // Agora, qualquer erro (de rede ou do script) será exibido aqui
+            alert(`Erro ao salvar o planejamento: ${erro.message}`);
         } finally {
             btnSalvarPlano.disabled = false;
             btnSalvarPlano.textContent = 'Salvar Planejamento';
         }
     }
 
-    // --- LÓGICA DA ABA 2: VISUALIZAR E COMPARAR PLANOS SALVOS ---
-    const acordeonContainer = document.getElementById('acordeon-planos');
-    const filtrosStatus = document.querySelectorAll('input[name="filtro-status"]');
-    const btnComparar = document.getElementById('btn-comparar-planos');
-    const resultadoComparacao = document.getElementById('resultado-comparacao');
-    const ganttChartDivComparativo = document.getElementById('gantt-chart-comparativo');
-    const btnViewOperacao = document.getElementById('btn-view-operacao');
-    const btnViewResponsavel = document.getElementById('btn-view-responsavel');
-
-async function carregarPlanosSalvos() {
-    if (!acordeonContainer) return;
-    acordeonContainer.innerHTML = `<div class="carregando">Carregando planejamentos...</div>`;
-    try {
-        const url = `${urlApi}?action=getTodosOsPlanejamentos&cacheBust=${new Date().getTime()}`;
-        const resposta = await fetch(url);
-        if (!resposta.ok) throw new Error('Falha ao buscar planejamentos.');
-        todosOsPlanosSalvos = await resposta.json();
-
-        // ==========================================================
-        // ADICIONE ESTA LINHA PARA DIAGNÓSTICO:
-        console.log('DADOS CARREGADOS PARA A ABA "VISUALIZAR":', todosOsPlanosSalvos);
-        // ==========================================================
-
-        if (todosOsPlanosSalvos.erro) throw new Error(todosOsPlanosSalvos.mensagem);
-
-        filtrarPlanos();
-        carregarOpsParaComparacao();
-    } catch (erro) {
-        acordeonContainer.innerHTML = `<div class="erro">Erro: ${erro.message}</div>`;
+    async function carregarPlanosSalvos() {
+        if (!acordeonContainer) return;
+        acordeonContainer.innerHTML = `<div class="carregando">Carregando planejamentos...</div>`;
+        try {
+            const url = `${urlApi}?action=getTodosOsPlanejamentos&cacheBust=${new Date().getTime()}`;
+            const resposta = await fetch(url);
+            if (!resposta.ok) throw new Error('Falha ao buscar planejamentos.');
+            todosOsPlanosSalvos = await resposta.json();
+            if (todosOsPlanosSalvos.erro) throw new Error(todosOsPlanosSalvos.mensagem);
+            filtrarPlanos();
+            carregarOpsParaComparacao();
+        } catch (erro) {
+            acordeonContainer.innerHTML = `<div class="erro">Erro: ${erro.message}</div>`;
+        }
     }
-}
 
     function renderizarPlanos(planosParaExibir) {
         acordeonContainer.innerHTML = '';
@@ -134,21 +148,62 @@ async function carregarPlanosSalvos() {
             const opItem = document.createElement('div');
             opItem.className = 'op-item';
             opItem.innerHTML = `
-                <button class="op-collapse-btn">
-                    <div class="op-info-group"><span class="op-info">OP: ${plano.op}</span>\n<span class="op-produto">${plano.produto}\n</span></div>
-                    <span class="status" data-status="${plano.status}">${plano.status}</span>
-                </button>
-                <div class="op-collapse-content"><div class="gantt-container-visualizacao" id="gantt-chart-${plano.op}"></div></div>
+                <div class="op-item-header">
+                    <button class="op-collapse-btn">
+                        <div class="op-info-group">
+                            <span class="op-info">OP: ${plano.op}</span>
+                            <span class="op-produto">${plano.produto}</span>
+                        </div>
+                        <span class="status" data-status="${plano.status}">${plano.status}</span>
+                    </button>
+                    <div class="op-actions">
+                        <button class="btn-editar-plano" title="Editar este planejamento">
+                            <i class="fas fa-pen-to-square"></i> Editar
+                        </button>
+                    </div>
+                </div>
+                <div class="op-collapse-content">
+                    <div class="gantt-container-visualizacao" id="gantt-chart-${plano.op}"></div>
+                </div>
             `;
             opItem.querySelector('.op-collapse-btn').addEventListener('click', (e) => toggleGantt(e, plano));
+            opItem.querySelector('.btn-editar-plano').addEventListener('click', () => iniciarEdicaoPlano(plano));
             acordeonContainer.appendChild(opItem);
         });
     }
 
+    function iniciarEdicaoPlano(plano) {
+        if (!plano.planejamento || plano.planejamento.length === 0) {
+            alert("Este planejamento não contém tarefas e não pode ser editado.");
+            return;
+        }
+        const dataInicioISO = plano.planejamento[0].inicio;
+        const dataInicioFormatada = new Date(dataInicioISO).toISOString().slice(0, 16);
+        inputDataHora.value = dataInicioFormatada;
+        let opEncontrada = false;
+        for (let option of selectOp.options) {
+            if (option.value) {
+                const optionData = JSON.parse(option.value);
+                if (optionData.id === plano.id) {
+                    option.selected = true;
+                    opEncontrada = true;
+                    break;
+                }
+            }
+        }
+        if (!opEncontrada) {
+            alert(`A Ordem de Produção "${plano.op}" está salva, mas não foi encontrada na lista de OPs "Em Andamento". Ela pode ter sido concluída.`);
+            return;
+        }
+        document.querySelector('.tab-link[data-tab="criar-plano"]').click();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
     function toggleGantt(event, plano) {
         const button = event.currentTarget;
-        const contentDiv = button.nextElementSibling;
-        button.classList.toggle('active');
+        const header = button.parentElement;
+        const contentDiv = header.nextElementSibling;
+        header.classList.toggle('active');
         if (contentDiv.style.maxHeight) {
             contentDiv.style.maxHeight = null;
         } else {
@@ -172,13 +227,9 @@ async function carregarPlanosSalvos() {
     }
 
     function carregarOpsParaComparacao() {
-        // Agora temos apenas um seletor múltiplo
         const selectOpsComp = document.getElementById('select-ops-comparacao');
         if (!selectOpsComp) return;
-
-        selectOpsComp.innerHTML = ''; // Limpa opções antigas
-
-        // Popula o seletor com todos os planos salvos
+        selectOpsComp.innerHTML = '';
         todosOsPlanosSalvos.forEach(plano => {
             const option = document.createElement('option');
             option.value = plano.op;
@@ -194,26 +245,20 @@ async function carregarPlanosSalvos() {
             alert("Por favor, selecione pelo menos duas OPs para comparar.");
             return;
         }
-        const planosSelecionados = todosOsPlanosSalvos.filter(p => opsSelecionadas.includes(p.op));
-        if (planosSelecionados.length !== opsSelecionadas.length) {
+        ultimosPlanosSelecionados = todosOsPlanosSalvos.filter(p => opsSelecionadas.includes(p.op));
+        if (ultimosPlanosSelecionados.length !== opsSelecionadas.length) {
             alert("Não foi possível encontrar os dados de uma ou mais OPs selecionadas.");
             return;
         }
-
-        ultimosPlanosSelecionados = planosSelecionados; // Salva os dados para re-desenhar
-
         resultadoComparacao.classList.remove('hidden');
         google.charts.setOnLoadCallback(() => desenharTimelineComparativa(ultimosPlanosSelecionados, ganttChartDivComparativo));
     }
 
-
-    // --- FUNÇÕES GENÉRICAS DE DESENHAR GRÁFICOS ---
     function desenharGraficoGantt(planejamento, container) {
         if (!planejamento || planejamento.length === 0) {
             container.innerHTML = '<div class="aviso">Não há dados para exibir o gráfico.</div>';
             return;
         }
-
         const data = new google.visualization.DataTable();
         data.addColumn('string', 'ID da Tarefa');
         data.addColumn('string', 'Nome da Tarefa');
@@ -223,7 +268,6 @@ async function carregarPlanosSalvos() {
         data.addColumn('number', 'Duração');
         data.addColumn('number', '% Concluído');
         data.addColumn('string', 'Dependências');
-
         const rows = planejamento.map(tarefa => [
             tarefa.id_tarefa,
             tarefa.nome_tarefa,
@@ -234,7 +278,6 @@ async function carregarPlanosSalvos() {
             tarefa.percentual_concluido || 0,
             tarefa.dependencias || null
         ]);
-
         data.addRows(rows);
         const alturaGrafico = rows.length * 41 + 50;
         const options = { height: alturaGrafico, gantt: { trackHeight: 30 } };
@@ -245,64 +288,54 @@ async function carregarPlanosSalvos() {
     function desenharTimelineComparativa(listaDePlanos, container) {
         const coresPaleta = ["#3366cc", "#dc3912", "#ff9900", "#109618", "#990099", "#0099c6", "#dd4477", "#66aa00", "#b82e2e"];
         const data = new google.visualization.DataTable();
-
-        // Adiciona as colunas. A terceira é uma coluna especial "tooltip" que permite HTML.
-        data.addColumn({ type: 'string', id: 'Agrupador' }); // Ex: "Cortar Acrílico" ou "João Silva"
-        data.addColumn({ type: 'string', id: 'Rótulo da Barra' }); // Ex: "OP 001"
-        data.addColumn({ type: 'string', role: 'tooltip', 'p': { 'html': true } }); // Tooltip customizado
+        data.addColumn({ type: 'string', id: 'Agrupador' });
+        data.addColumn({ type: 'string', id: 'Rótulo da Barra' });
+        data.addColumn({ type: 'string', role: 'tooltip', 'p': { 'html': true } });
         data.addColumn({ type: 'date', id: 'Início' });
         data.addColumn({ type: 'date', id: 'Fim' });
-
         let todasAsRows = [];
-        let labelsUnicas = new Set(); // Para calcular a altura do gráfico
-
+        let labelsUnicas = new Set();
         listaDePlanos.forEach(plano => {
             const rowsDoPlano = plano.planejamento.map(tarefa => {
-                // Cria o conteúdo HTML do tooltip
                 const tooltipHtml = `<div style="padding:10px; font-family: Arial, sans-serif;">
                     <strong>${tarefa.nome_tarefa} (OP ${plano.op})</strong><br>
+                    <strong>Produto:</strong> ${plano.produto}<br>
                     <strong>Responsável:</strong> ${tarefa.responsavel || 'Não definido'}<br>
                     <strong>Início:</strong> ${new Date(tarefa.inicio).toLocaleString()}<br>
                     <strong>Fim:</strong> ${new Date(tarefa.fim).toLocaleString()}
-                 </div>`;
-
+                   </div>`;
                 let agrupador, rotuloBarra;
-
                 if (modoDeVisualizacao === 'operacao') {
                     agrupador = tarefa.nome_tarefa;
-                    rotuloBarra = `OP ${plano.op}`;
-                } else { // modoDeVisualizacao === 'responsavel'
+                    rotuloBarra = modoDeRotulo === 'produto' ? plano.produto : `OP ${plano.op}`;
+                } else {
                     agrupador = tarefa.responsavel || 'Não Atribuído';
-                    rotuloBarra = `${tarefa.nome_tarefa} (OP ${plano.op})`;
+                    const identificador = modoDeRotulo === 'produto' ? plano.produto : `OP ${plano.op}`;
+                    rotuloBarra = `${tarefa.nome_tarefa} (${identificador})`;
                 }
-
                 labelsUnicas.add(agrupador);
                 return [agrupador, rotuloBarra, tooltipHtml, new Date(tarefa.inicio), new Date(tarefa.fim)];
             });
             todasAsRows.push(...rowsDoPlano);
         });
-
         if (todasAsRows.length === 0) {
             container.innerHTML = '<div class="aviso">Não há dados para exibir o gráfico.</div>';
             return;
         }
         data.addRows(todasAsRows);
-
         const alturaGrafico = labelsUnicas.size * 41 + 60;
         const options = {
             height: alturaGrafico,
             colors: coresPaleta,
-            tooltip: { isHtml: true }, // Habilita o tooltip HTML
+            tooltip: { isHtml: true },
             timeline: {
                 groupByRowLabel: true,
                 rowLabelStyle: { fontName: 'Helvetica', fontSize: 13 },
                 barLabelStyle: { fontName: 'Arial', fontSize: 11 }
             }
         };
-
         const chart = new google.visualization.Timeline(container);
         const legendaContainer = document.getElementById('legenda-comparativo');
-
         google.visualization.events.addListener(chart, 'ready', function () {
             if (legendaContainer) {
                 legendaContainer.innerHTML = '';
@@ -310,7 +343,8 @@ async function carregarPlanosSalvos() {
                     const cor = coresPaleta[index % coresPaleta.length];
                     const legendaItem = document.createElement('div');
                     legendaItem.className = 'legenda-item';
-                    legendaItem.innerHTML = `<span class="legenda-cor" style="background-color: ${cor};"></span> OP ${plano.op}`;
+                    const textoLegenda = modoDeRotulo === 'produto' ? plano.produto : `OP ${plano.op}`;
+                    legendaItem.innerHTML = `<span class="legenda-cor" style="background-color: ${cor};"></span> ${textoLegenda}`;
                     legendaContainer.appendChild(legendaItem);
                 });
             }
@@ -326,13 +360,9 @@ async function carregarPlanosSalvos() {
             const target = document.getElementById(tab.dataset.tab);
             tabContents.forEach(content => content.classList.remove('active'));
             if (target) target.classList.add('active');
-            if (tab.dataset.tab === 'visualizar-planos') {
-                carregarPlanosSalvos();
-            }
         });
     });
 
-    // Listeners para os botões de modo de visualização
     btnViewOperacao.addEventListener('click', () => {
         modoDeVisualizacao = 'operacao';
         btnViewOperacao.classList.add('active');
@@ -351,12 +381,30 @@ async function carregarPlanosSalvos() {
         }
     });
 
+    btnRotuloOp.addEventListener('click', () => {
+        modoDeRotulo = 'op';
+        btnRotuloOp.classList.add('active');
+        btnRotuloProduto.classList.remove('active');
+        if (ultimosPlanosSelecionados.length > 0) {
+            desenharTimelineComparativa(ultimosPlanosSelecionados, ganttChartDivComparativo);
+        }
+    });
+
+    btnRotuloProduto.addEventListener('click', () => {
+        modoDeRotulo = 'produto';
+        btnRotuloProduto.classList.add('active');
+        btnRotuloOp.classList.remove('active');
+        if (ultimosPlanosSelecionados.length > 0) {
+            desenharTimelineComparativa(ultimosPlanosSelecionados, ganttChartDivComparativo);
+        }
+    });
+
     if (formCriar) formCriar.addEventListener('submit', handlePlanejamento);
     if (btnSalvarPlano) btnSalvarPlano.addEventListener('click', salvarPlano);
     filtrosStatus.forEach(filtro => filtro.addEventListener('change', filtrarPlanos));
     if (btnComparar) btnComparar.addEventListener('click', handleComparacao);
 
-    // Carrega os dados iniciais
+    // --- CARREGAMENTO INICIAL DOS DADOS ---
     carregarOpsParaSelecao();
     carregarPlanosSalvos();
 

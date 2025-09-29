@@ -18,12 +18,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
             selectOpBusca.innerHTML = '<option value="" disabled selected>Selecione uma OP</option>';
             listaOps.forEach(item => {
-                // O valor da opção será o ID único (ex: 'md34e8j1q1...')
                 const optionValue = item.id;
-
-                // O texto visível para o usuário continuará o mesmo
                 const optionText = `OP: ${item.op} (${item.status})`;
-
                 selectOpBusca.add(new Option(optionText, optionValue));
             });
 
@@ -37,7 +33,6 @@ document.addEventListener('DOMContentLoaded', function () {
      * Busca os detalhes completos da OP selecionada usando o seu ID.
      */
     async function buscarOpSelecionada() {
-        // Agora, o valor selecionado será o ID correto
         const idSelecionado = selectOpBusca.value;
         if (!idSelecionado) return;
 
@@ -45,7 +40,6 @@ document.addEventListener('DOMContentLoaded', function () {
         resultadoContainer.innerHTML = `<div class="card">Buscando dados da OP...</div>`;
         console.log(idSelecionado);
         try {
-            // A chamada para a API agora usa 'getOpById' e envia o id_op
             const url = `${urlApi}?action=getOpById&id_op=${idSelecionado}&cacheBust=${new Date().getTime()}`;
             const resposta = await fetch(url);
             if (!resposta.ok) throw new Error("Falha de rede ao buscar detalhes da OP.");
@@ -66,6 +60,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Garante que 'operacoes' seja sempre um array para o .map() funcionar
         const listaOperacoes = Array.isArray(operacoes) ? operacoes : [];
+
+        // --- MODIFICAÇÃO 1: Obter a quantidade do cabeçalho da OP ---
+        const quantidadeOP = parseFloat(cabecalho.quantidade) || 1;
 
         const resultadoHtml = `
             <div class="card">
@@ -100,13 +97,21 @@ document.addEventListener('DOMContentLoaded', function () {
                             </tr>
                         </thead>
                         <tbody>
-                            ${listaOperacoes.map(op => `
-                                <tr>
-                                    <td>${op[0] || ''}</td><td>${op[1] || ''}</td><td>${op[2] || ''}</td>
-                                    <td>${op[3] || ''}</td><td>${op[4] || ''}</td>
-                                    <td></td><td></td><td></td>
-                                </tr>
-                            `).join('')}
+                            ${listaOperacoes.map(op => {
+                                // --- MODIFICAÇÃO 2: Calcular o tempo total para cada operação ---
+                                const tempoEstimadoUnitario = parseFloat(op[3]) || 0;
+                                const tempoTotalCalculado = tempoEstimadoUnitario * quantidadeOP;
+
+                                // --- MODIFICAÇÃO 3: Retornar a linha da tabela com o valor calculado ---
+                                return `
+                                    <tr>
+                                        <td>${op[0] || ''}</td><td>${op[1] || ''}</td><td>${op[2] || ''}</td>
+                                        <td>${tempoTotalCalculado > 0 ? tempoTotalCalculado.toFixed(2) : ''}</td>
+                                        <td>${op[4] || ''}</td>
+                                        <td></td><td></td><td></td>
+                                    </tr>
+                                `;
+                            }).join('')}
                         </tbody>
                     </table>
                 </main>

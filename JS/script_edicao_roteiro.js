@@ -17,6 +17,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- CONFIGURAÇÃO ---
     const urlApi = 'https://script.google.com/macros/s/AKfycbzCLJyPh0RYo1yOb4gcw6eegtfzlq2H_L9GktFQXyos13Bxz57bvXGTtWGa_Ens3Wqnzg/exec';
 
+    // --- MODIFICAÇÃO 1: Definir a lista de colaboradores ---
+    const listaColaboradores = [
+        "ALEX", "ATAADSON", "CARLOS", "EDVAN", "RODRIGO", "FELIPE", "ANDERSON", 
+        "HUMBERTO", "MATHEUS", "RAFAEL", "FLORISVALDO", "REINALDO", "GABRIEL", 
+        "ALISSON", "EDNILSON"
+    ];
+
     // --- ESTADO DA APLICAÇÃO ---
     let dadosParaSelecao = {};
     let operacoesAtuais = [];
@@ -25,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- LÓGICA DOS MENUS ---
     async function carregarMenusIniciais() {
+        // ... (esta função não precisa de alterações)
         if (!selectProduto) return;
         selectProduto.innerHTML = '<option value="">Carregando...</option>';
         const url = `${urlApi}?action=getValoresFormulario&cacheBust=${new Date().getTime()}`;
@@ -43,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function atualizarSequencias() {
+        // ... (esta função não precisa de alterações)
         const produto = selectProduto.value;
         selectSequencia.innerHTML = '<option value="" disabled selected>Selecione uma sequência</option>';
         selectSequencia.disabled = true;
@@ -58,6 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function atualizarRoteiros() {
+        // ... (esta função não precisa de alterações)
         const produto = selectProduto.value;
         const sequencia = selectSequencia.value;
         selectRoteiro.innerHTML = '<option value="" disabled selected>Selecione um roteiro</option>';
@@ -72,6 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function atualizarRevisoes() {
+        // ... (esta função não precisa de alterações)
         const produto = selectProduto.value;
         const sequencia = selectSequencia.value;
         const roteiro = selectRoteiro.value;
@@ -86,6 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- LÓGICA DE EDIÇÃO ---
     async function carregarRoteiroParaEdicao() {
+        // ... (esta função não precisa de alterações)
         infoRoteiroAtual = { produto: selectProduto.value, sequencia: selectSequencia.value, roteiro: selectRoteiro.value, revisao: selectRevisao.value };
         if (!infoRoteiroAtual.produto || !infoRoteiroAtual.sequencia || !infoRoteiroAtual.roteiro || !infoRoteiroAtual.revisao) {
             alert('Por favor, selecione todos os campos para carregar.');
@@ -116,19 +128,34 @@ document.addEventListener('DOMContentLoaded', function () {
         tabelaBody.innerHTML = '';
         operacoesAtuais.sort((a, b) => (parseInt(a.ordem) || 0) - (parseInt(b.ordem) || 0));
         const mapaDeOrdens = new Map(operacoesAtuais.map(op => [op.id.toString(), op.ordem]));
+        
         operacoesAtuais.forEach(op => {
             const linha = tabelaBody.insertRow();
             linha.dataset.id = op.id;
             const dependenciasTexto = (op.dependencias || []).map(idTemp => mapaDeOrdens.get(idTemp.toString()) || '?').join(', ');
+            
+            // --- MODIFICAÇÃO 2: Gerar o HTML das opções do select ---
+            const responsavelAtual = op.responsavel || '';
+            const optionsHtml = listaColaboradores.map(nome => 
+                `<option value="${nome}" ${nome === responsavelAtual ? 'selected' : ''}>${nome}</option>`
+            ).join('');
+
+            // --- MODIFICAÇÃO 3: Substituir o input pelo select no HTML da linha ---
             linha.innerHTML = `
                 <td><input type="number" class="edit-ordem" value="${op.ordem || ''}"></td>
                 <td><input type="text" class="edit-operacao" value="${op.operacao || ''}"></td>
                 <td><input type="text" class="edit-setor" value="${op.setor_maquina || ''}"></td>
                 <td><input type="number" class="edit-tempo" value="${op.tempo_estimado || ''}" step="0.1"></td>
-                <td><input type="text" class="edit-responsavel" value="${op.responsavel || ''}"></td>
+                <td>
+                    <select class="edit-responsavel">
+                        <option value="" ${!responsavelAtual ? 'selected' : ''}>Selecione</option>
+                        ${optionsHtml}
+                    </select>
+                </td>
                 <td><span>${dependenciasTexto}</span><button type="button" class="btn-editar-deps" title="Editar Dependências"><i class="fas fa-link"></i></button></td>
                 <td class="acoes-tabela"><button type="button" class="btn-remover-edicao" title="Remover Operação"><i class="fas fa-trash-alt"></i></button></td>
             `;
+            
             linha.querySelector('.btn-remover-edicao').addEventListener('click', () => {
                 if (confirm('Tem certeza?')) {
                     operacoesAtuais = operacoesAtuais.filter(item => item.id !== op.id);
@@ -140,12 +167,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function adicionarNovaLinhaEditavel() {
+        // ... (esta função não precisa de alterações)
         const novaOrdem = operacoesAtuais.length > 0 ? Math.max(...operacoesAtuais.map(op => parseInt(op.ordem) || 0)) + 1 : 1;
         operacoesAtuais.push({ id: 'novo-' + Date.now(), ordem: novaOrdem, operacao: '', setor_maquina: '', tempo_estimado: '', responsavel: '', dependencias: [] });
         renderizarTabela();
     }
 
     async function salvarAlteracoes() {
+        // ... (esta função não precisa de alterações, pois .querySelector('.edit-responsavel').value funciona para select também)
         if (!infoRoteiroAtual.produto) { alert("Nenhum roteiro carregado."); return; }
         const revisaoParaSalvar = inputRevisaoEdicao ? inputRevisaoEdicao.value : infoRoteiroAtual.revisao;
         if (!revisaoParaSalvar) { alert("O campo 'Salvar como Revisão nº' é obrigatório."); return; }
@@ -188,6 +217,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     
     function abrirModalDependencias(idOperacao) {
+        // ... (esta função não precisa de alterações)
         idOperacaoEmEdicao = idOperacao;
         const operacaoAtual = operacoesAtuais.find(op => op.id === idOperacao);
         if (!operacaoAtual) return;
@@ -208,6 +238,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function salvarDependencias() {
+        // ... (esta função não precisa de alterações)
         const operacaoAtual = operacoesAtuais.find(op => op.id === idOperacaoEmEdicao);
         if (!operacaoAtual) return;
         const containerCheckboxes = document.getElementById('lista-dependencias-modal');
